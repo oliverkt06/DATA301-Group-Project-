@@ -155,6 +155,27 @@ data2019_clean <- data2019_clean %>%
 ```
 
 ```{r}
+summary(data2015_clean)
+summary(data2019_clean)
+```
+
+```{r}
+data2019_clean <- data2019_clean %>%
+  mutate(
+    across(
+      c(laseniors1, laseniors10, lasnap1, lasnap10,
+        laseniors20,laseniorshalf,laseniorshalfshare,senior_la_n, snap_la_n),
+      ~ as.numeric(ifelse(.x == "NULL", "0", .x))
+    )
+  )
+```
+
+```{r}
+summary(data2019_clean)
+```
+
+
+```{r}
 #Senior
 data2015_clean <- data2015_clean %>%
   mutate(
