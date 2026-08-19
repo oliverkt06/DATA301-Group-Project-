@@ -13,3 +13,16 @@ Hi everyone im Oliver.
 
 hi im mairangi
  Luna
+
+# DATA 2015
+```{r Data Inputs 2015}
+library(readxl)
+DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", sheet = 3)
+head(DATA2015)
+```
+# DATA 2019
+
+```{r DATA Inputs 2019}
+DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", sheet = 3)
+head(DATA2019)
+```
