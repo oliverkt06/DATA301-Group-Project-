@@ -347,4 +347,86 @@ summary_table <- combined_data %>%
 
 summary_table
 ```
+```{r}
+dim(data2015_clean)
+names(data2015_clean)
+str(data2015_clean)
+summary(data2015_clean)
+```
+Data Cleaning and Missing Data. 
 
+```{r}
+dim(data2019_clean)
+names(data2019_clean)
+str(data2019_clean)
+summary(data2019_clean)
+```
+
+```{r}
+colSums(is.na(data2019_clean))
+
+```
+
+```{r}
+dim(data2015_clean)
+names(data2015_clean)
+str(data2015_clean)
+summary(data2015_clean)
+```
+
+```{r}
+colSums(is.na(data2015_clean))
+```
+
+```{r}
+summary(data2015_clean$snap_la_rate)
+summary(data2019_clean$snap_la_rate)
+```
+
+```{r}
+summary(data2015_clean$senior_la_rate)
+summary(data2019_clean$senior_la_rate)
+```
+
+```{r}
+library(ggplot2)
+ggplot(data2019_clean, aes(x = snap_la_rate)) +
+  geom_histogram(bins = 30, na.rm = TRUE) +
+  labs(
+    title = "Distribution of SNAP Low-Access Rate, 2019",
+    x = "SNAP Low-Access Rate",
+    y = "Number of Census Tracts"
+  )
+```
+
+```{r}
+library(ggplot2)
+ggplot(data2015_clean, aes(x = snap_la_rate)) +
+  geom_histogram(bins = 30, na.rm = TRUE) +
+  labs(
+    title = "Distribution of SNAP Low-Access Rate, 2015",
+    x = "SNAP Low-Access Rate",
+    y = "Number of Census Tracts"
+  )
+```
+```{r}
+library(ggplot2)
+ggplot(data2019_clean, aes(x = senior_la_rate)) +
+  geom_histogram(bins = 30, na.rm = TRUE) +
+  labs(
+    title = "Distribution of Senior Low-Access Rate, 2019",
+    x = "Senior Low-Access Rate",
+    y = "Number of Census Tracts"
+  )
+```
+
+```{r}
+library(ggplot2)
+ggplot(data2015_clean, aes(x = senior_la_rate)) +
+  geom_histogram(bins = 30, na.rm = TRUE) +
+  labs(
+    title = "Distribution of Senior Low-Access Rate, 2015",
+    x = "Senior Low-Access Rate",
+    y = "Number of Census Tracts"
+  )
+```
