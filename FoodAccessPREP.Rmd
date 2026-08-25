@@ -25,14 +25,14 @@ To enable comparisons between years, our group used both the 2015 and 2019 Food 
 
 ```{r Data Inputs 2015}
 library(readxl)
-DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", sheet = 3)
+DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", sheet = 3, na = c("", "NULL"))
 head(DATA2015)
 ```
 
 # DATA 2019
 
 ```{r DATA Inputs 2019}
-DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", sheet = 3)
+DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", sheet = 3, na = c("", "NULL"))
 head(DATA2019)
 ```
 
@@ -49,27 +49,42 @@ str(DATA2019)
 ```
 
 ```{r}
+# To Unify variable names
 names(DATA2015) <- tolower(names(DATA2015))
 names(DATA2019) <- tolower(names(DATA2019))
 ```
 
+
 ```{r}
 library(dplyr)
+library(tidyr)
+library(knitr)
+library(ggplot2)
+```
+
+```{r}
+# Select variables we need
 data2015_clean <- DATA2015 %>%
   select(
     censustract,
     state,
     county,
     urban,
+    pop2010,
+    ohu2010,
     laseniors1,
     laseniors10,
     lasnap1,
+    laseniors1share,
+    laseniors10share,
+    lasnap1share,
+    lasnap10share,
     lasnap10,
-    tractseniors,
-    tractsnap,
     laseniors20,
     laseniorshalf,
-    laseniorshalfshare
+    laseniorshalfshare,
+    tractseniors,
+    tractsnap,
   )
 
 data2019_clean <- DATA2019 %>%
@@ -78,16 +93,75 @@ data2019_clean <- DATA2019 %>%
     state,
     county,
     urban,
+    pop2010,
+    ohu2010,
     laseniors1,
     laseniors10,
+    laseniors1share,
+    laseniors10share,
+    lasnap1share,
+    lasnap10share,
     lasnap1,
     lasnap10,
-    tractseniors,
-    tractsnap,
     laseniors20,
     laseniorshalf,
-    laseniorshalfshare
+    laseniorshalfshare,
+    tractseniors,
+    tractsnap, 
+)
+```
+
+```{r}
+numeric_vars <- c(
+  "urban",
+  "pop2010",
+  "ohu2010",
+  "laseniors1",
+  "laseniors10",
+  "laseniors1share",
+  "laseniors10share",
+  "lasnap1",
+  "lasnap10",
+  "lasnap1share",
+  "lasnap10share",
+  "tractseniors",
+  "tractsnap"
+)
+
+data2015_clean <- data2015_clean %>%
+  mutate(
+    across(
+      any_of(numeric_vars),
+      as.numeric
+    )
   )
+
+data2019_clean <- data2019_clean %>%
+  mutate(
+    across(
+      any_of(numeric_vars),
+      as.numeric
+    )
+  )
+
+combined_data <- bind_rows(
+  data2015_clean,
+  data2019_clean
+)
+
+combined_data
+```
+
+```{r}
+sapply(
+  data2015_clean[numeric_vars],
+  class
+)
+
+sapply(
+  data2019_clean[numeric_vars],
+  class
+)
 ```
 
 ```{r add year}
@@ -102,22 +176,96 @@ data2019_clean <- data2019_clean %>%
 #Create Urban/Rural
 data2015_clean <- data2015_clean %>%
   mutate(
+    year = 2015,
     area = if_else(
       urban == 1,
       "Urban",
-      "Rural"
+      "Rural",
+      missing = NA_character_
     )
   )
 
 data2019_clean <- data2019_clean %>%
   mutate(
+    year = 2019,
     area = if_else(
       urban == 1,
       "Urban",
-      "Rural"
+      "Rural",
+      missing = NA_character_
     )
   )
 ```
+
+```{r}
+# 2015 of senior and snap
+data2015_clean <- data2015_clean %>%
+  mutate(
+    senior_la_n = case_when(
+      urban == 1 ~ laseniors1,
+      urban == 0 ~ laseniors10,
+      TRUE ~ NA_real_
+    ),
+
+    snap_la_n = case_when(
+      urban == 1 ~ lasnap1,
+      urban == 0 ~ lasnap10,
+      TRUE ~ NA_real_
+    )
+  )
+
+# 2019 of senior and snap
+data2019_clean <- data2019_clean %>%
+  mutate(
+    senior_la_n = case_when(
+      urban == 1 ~ laseniors1,
+      urban == 0 ~ laseniors10,
+      TRUE ~ NA_real_
+    ),
+
+    snap_la_n = case_when(
+      urban == 1 ~ lasnap1,
+      urban == 0 ~ lasnap10,
+      TRUE ~ NA_real_
+    )
+  )
+```
+
+```{r}
+# Show precentage
+# 2015
+data2015_clean <- data2015_clean %>%
+  mutate(
+    senior_la_pct = case_when(
+      urban == 1 ~ laseniors1share * 100,
+      urban == 0 ~ laseniors10share * 100,
+      TRUE ~ NA_real_
+    ),
+
+    snap_la_pct = case_when(
+      urban == 1 ~ lasnap1share * 100,
+      urban == 0 ~ lasnap10share * 100,
+      TRUE ~ NA_real_
+    )
+  )
+
+# 2019
+data2019_clean <- data2019_clean %>%
+  mutate(
+    senior_la_pct = case_when(
+      urban == 1 ~ laseniors1share,
+      urban == 0 ~ laseniors10share,
+      TRUE ~ NA_real_
+    ),
+
+    snap_la_pct = case_when(
+      urban == 1 ~ lasnap1share,
+      urban == 0 ~ lasnap10share,
+      TRUE ~ NA_real_
+    )
+  )
+```
+
 
 ```{r}
 # Seniors
@@ -167,14 +315,14 @@ summary(data2019_clean)
 ```
 
 ```{r}
-data2019_clean <- data2019_clean %>%
-  mutate(
-    across(
-      c(laseniors1, laseniors10, lasnap1, lasnap10,
-        laseniors20,laseniorshalf,laseniorshalfshare,senior_la_n, snap_la_n),
-      ~ as.numeric(ifelse(.x == "NULL", "0", .x))
-    )
-  )
+#data2019_clean <- data2019_clean %>%
+#  mutate(
+#    across(
+#      c(laseniors1, laseniors10, lasnap1, lasnap10,
+#        laseniors20,laseniorshalf,laseniorshalfshare,senior_la_n, snap_la_n),
+#      ~ as.numeric(ifelse(.x == "NULL", "0", .x))
+#    )
+#  )
 ```
 
 ```{r}
@@ -182,175 +330,233 @@ summary(data2019_clean)
 ```
 
 ```{r}
-#Senior
-data2015_clean <- data2015_clean %>%
+summary_stats <- bind_rows(
+  
+  data2015_clean %>%
+    transmute(
+      year = 2015,
+      Senior = senior_la_pct,
+      SNAP = snap_la_pct
+    ),
+  
+  data2019_clean %>%
+    transmute(
+      year = 2019,
+      Senior = senior_la_pct,
+      SNAP = snap_la_pct
+    )
+  
+) %>%
+  
+  pivot_longer(
+    cols = c(Senior, SNAP),
+    names_to = "Group",
+    values_to = "Low_Access_Pct"
+  ) %>%
+  
+  group_by(year, Group) %>%
+  
+  summarise(
+    Min = min(Low_Access_Pct, na.rm = TRUE),
+    Q1 = quantile(Low_Access_Pct, 0.25, na.rm = TRUE),
+    Median = median(Low_Access_Pct, na.rm = TRUE),
+    Mean = mean(Low_Access_Pct, na.rm = TRUE),
+    Q3 = quantile(Low_Access_Pct, 0.75, na.rm = TRUE),
+    Max = max(Low_Access_Pct, na.rm = TRUE),
+    Missing = sum(is.na(Low_Access_Pct)),
+    .groups = "drop"
+  ) %>%
+  
   mutate(
-    senior_la_rate = if_else(
-      tractseniors > 0,
-      senior_la_n / tractseniors,
-      NA_real_
+    across(
+      c(Min, Q1, Median, Mean, Q3, Max),
+      ~ round(.x, 2)
     )
   )
 
-# SNAP
-data2015_clean <- data2015_clean %>%
-  mutate(
-    snap_la_rate = if_else(
-      tractsnap > 0,
-      snap_la_n / tractsnap,
-      NA_real_
-    )
+summary_stats
+```
+
+```{r}
+kable(
+  summary_stats,
+  caption = "Summary Statistics for Senior and SNAP Low-Access Shares, 2015 and 2019",
+  col.names = c(
+    "Year",
+    "Group",
+    "Min (%)",
+    "Q1 (%)",
+    "Median (%)",
+    "Mean (%)",
+    "Q3 (%)",
+    "Max (%)",
+    "Missing"
+  ),
+  align = c(
+    "c", "l",
+    "r", "r", "r", "r", "r", "r", "r"
+  )
+)
+```
+
+```{r}
+# Check whether over 100
+data2015_clean %>%
+  summarise(
+    senior_over_100 = sum(senior_la_pct > 100, na.rm = TRUE),
+    snap_over_100 = sum(snap_la_pct > 100, na.rm = TRUE)
   )
 
-#Senior
-data2019_clean <- data2019_clean %>%
-  mutate(
-    senior_la_rate = if_else(
-      tractseniors > 0,
-      senior_la_n / tractseniors,
-      NA_real_
-    )
+data2019_clean %>%
+  summarise(
+    senior_over_100 = sum(senior_la_pct > 100, na.rm = TRUE),
+    snap_over_100 = sum(snap_la_pct > 100, na.rm = TRUE)
+  )
+```
+```{r}
+data2015_clean %>%
+  filter(snap_la_pct > 100) %>%
+  select(
+    censustract,
+    urban,
+    area,
+    lasnap1share,
+    lasnap10share,
+    snap_la_pct
   )
 
-# SNAP
-data2019_clean <- data2019_clean %>%
-  mutate(
-    snap_la_rate = if_else(
-      tractsnap > 0,
-      snap_la_n / tractsnap,
-      NA_real_
-    )
+data2019_clean %>%
+  filter(snap_la_pct > 100) %>%
+  select(
+    censustract,
+    urban,
+    area,
+    lasnap1share,
+    lasnap10share,
+    snap_la_pct
+  )
+```
+
+```{r}
+options(digits = 15)
+
+data2015_clean %>%
+  filter(snap_la_pct > 100) %>%
+  select(
+    censustract,
+    urban,
+    area,
+    lasnap1share,
+    lasnap10share,
+    snap_la_pct
+  )
+
+data2019_clean %>%
+  filter(snap_la_pct > 100) %>%
+  select(
+    censustract,
+    urban,
+    area,
+    lasnap1share,
+    lasnap10share,
+    snap_la_pct
   )
 ```
 
 ```{r}
 # Show precentage
-data2015_clean <- data2015_clean %>%
-  mutate(
-    senior_la_pct = senior_la_rate * 100,
-    snap_la_pct = snap_la_rate * 100
-  )
+#data2015_clean <- data2015_clean %>%
+#  mutate(
+#    senior_la_pct = senior_la_rate * 100,
+#    snap_la_pct = snap_la_rate * 100
+#  )
 
-data2019_clean <- data2019_clean %>%
-  mutate(
-    senior_la_pct = senior_la_rate * 100,
-    snap_la_pct = snap_la_rate * 100
-  )
+#data2019_clean <- data2019_clean %>%
+#  mutate(
+#    senior_la_pct = senior_la_rate * 100,
+#    snap_la_pct = snap_la_rate * 100
+#  )
 ```
 
-```{r}
-sapply(
-  data2015_clean[
-    c(
-      "urban",
-      "laseniors1",
-      "laseniors10",
-      "lasnap1",
-      "lasnap10",
-      "tractseniors",
-      "tractsnap",
-      "laseniors20",
-      "laseniorshalf",
-      "laseniorshalfshare"
-    )
-  ],
-  class
-)
-
-sapply(
-  data2019_clean[
-    c(
-      "urban",
-      "laseniors1",
-      "laseniors10",
-      "lasnap1",
-      "lasnap10",
-      "tractseniors",
-      "tractsnap",
-      "laseniors20",
-      "laseniorshalf",
-      "laseniorshalfshare"
-    )
-  ],
-  class
-)
-```
 
 ```{r}
-numeric_vars <- c(
-  "urban",
-  "laseniors1",
-  "laseniors10",
-  "lasnap1",
-  "lasnap10",
-  "tractseniors",
-  "tractsnap",
-  "senior_la_n",
-  "snap_la_n",
-  "senior_la_rate",
-  "snap_la_rate",
-  "senior_la_pct",
-  "snap_la_pct",
-  "laseniors20",
-  "laseniorshalf",
-  "laseniorshalfshare"
-)
-
-data2015_clean <- data2015_clean %>%
-  mutate(
-    across(
-      any_of(numeric_vars),
-      ~ as.numeric(.)
-    )
-  )
-
-data2019_clean <- data2019_clean %>%
-  mutate(
-    across(
-      any_of(numeric_vars),
-      ~ as.numeric(.)
-    )
-  )
-
 combined_data <- bind_rows(
   data2015_clean,
   data2019_clean
 )
-
 combined_data
 ```
+```{r}
+dim(combined_data)
+table(combined_data$year)
+table(combined_data$area, useNA = "ifany")
+```
+Explain:
+After harmonisation, the 2015 and 2019 datasets were combined into a dataset containing 145,395 census-tract observations. Of these, 110,341 were classified as urban and 35,054 as rural, with no missing values in the urban–rural classification.
 
 ```{r}
 summary_table <- combined_data %>%
-  group_by(
-    year,
-    area
-  ) %>%
-
+  group_by(year, area) %>%
   summarise(
-
     n_tracts = n(),
 
-    senior_la_rate =
-      sum(senior_la_n, na.rm = TRUE) /
-      sum(tractseniors, na.rm = TRUE),
+    n_valid_senior =
+      sum(!is.na(senior_la_pct)),
 
-    snap_la_rate =
-      sum(snap_la_n, na.rm = TRUE) /
-      sum(tractsnap, na.rm = TRUE),
+    n_valid_snap =
+      sum(!is.na(snap_la_pct)),
+
+    mean_senior_pct =
+      mean(senior_la_pct, na.rm = TRUE),
+
+    median_senior_pct =
+      median(senior_la_pct, na.rm = TRUE),
+
+    mean_snap_pct =
+      mean(snap_la_pct, na.rm = TRUE),
+
+    median_snap_pct =
+      median(snap_la_pct, na.rm = TRUE),
 
     .groups = "drop"
-  ) %>%
-
-  mutate(
-    senior_la_pct =
-      senior_la_rate * 100,
-
-    snap_la_pct =
-      snap_la_rate * 100
   )
+#summary_table <- combined_data %>%
+#  group_by(year, area) %>%
+#  summarise(n_tracts = n(),
+#    senior_la_rate =
+#      sum(senior_la_n, na.rm = TRUE) /
+#      sum(tractseniors, na.rm = TRUE),
+#    snap_la_rate =
+#      sum(snap_la_n, na.rm = TRUE) /
+#      sum(tractsnap, na.rm = TRUE),
+#    .groups = "drop"
+#  ) %>%
+
+#  mutate(
+#    senior_la_pct =
+#      senior_la_rate * 100,
+#    snap_la_pct =
+#      snap_la_rate * 100
+# )
 
 summary_table
+```
+
+```{r}
+summary_table_report <- summary_table %>%
+  mutate(
+    across(
+      c(
+        mean_senior_pct,
+        median_senior_pct,
+        mean_snap_pct,
+        median_snap_pct
+      ),
+      ~ round(.x, 2)
+    )
+  )
+
+summary_table_report
 ```
 
 ```{r}
@@ -385,18 +591,126 @@ colSums(is.na(data2015_clean))
 ```
 
 ```{r}
-summary(data2015_clean$snap_la_rate)
-summary(data2019_clean$snap_la_rate)
+#summary(data2015_clean$snap_la_rate)
+#summary(data2019_clean$snap_la_rate)
 ```
 
 ```{r}
-summary(data2015_clean$senior_la_rate)
-summary(data2019_clean$senior_la_rate)
+#summary(data2015_clean$senior_la_rate)
+#summary(data2019_clean$senior_la_rate)
+```
+
+
+```{r}
+#data2015_clean %>%
+#  summarise(
+#    n_over_1 = sum(snap_la_rate > 1, na.rm = TRUE),
+#    max_rate = max(snap_la_rate, na.rm = TRUE)
+#  )
+
+#data2019_clean %>%
+#  summarise(
+#    n_over_1 = sum(snap_la_rate > 1, na.rm = TRUE),
+#    max_rate = max(snap_la_rate, na.rm = TRUE)
+#  )
+
+```
+
+```{r}
+#data2015_clean %>%
+#  filter(snap_la_rate > 1) %>%
+#  select(
+#    censustract,
+#    urban,
+#    tractsnap,
+#    lasnap1,
+#    lasnap10,
+#    snap_la_n,
+#    snap_la_rate
+#  ) %>%
+#  head(20)
+
+#data2019_clean %>%
+#  filter(snap_la_rate > 1) %>%
+#  select(
+#    censustract,
+#    urban,
+#    tractsnap,
+#    lasnap1,
+#    lasnap10,
+#    snap_la_n,
+#    snap_la_rate
+#  ) %>%
+#  head(20)
+
+```
+
+```{r}
+#data2015_clean %>%
+#  summarise(
+#    n_numerator_gt_denominator =
+#      sum(snap_la_n > tractsnap, na.rm = TRUE)
+#  )
+
+#data2019_clean %>%
+#  summarise(
+#    n_numerator_gt_denominator =
+#      sum(snap_la_n > tractsnap, na.rm = TRUE)
+#  )
+
+```
+
+```{r}
+# Senior Boxplot
+ggplot(
+  combined_data,
+  aes(
+    x = factor(year),
+    y = senior_la_pct,
+    fill = area
+  )
+) +
+  geom_boxplot(
+    outlier.size = 0.3,
+    na.rm = TRUE
+  ) +
+  scale_fill_grey() +
+  labs(
+    title = "Senior Low-Access Share by Year and Area",
+    x = "Year",
+    y = "Senior Low-Access Share (%)",
+    fill = "Area"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+# SNAP boxplot
+ggplot(
+  combined_data,
+  aes(
+    x = factor(year),
+    y = snap_la_pct,
+    fill = area
+  )
+) +
+  geom_boxplot(
+    outlier.size = 0.3,
+    na.rm = TRUE
+  ) +
+  scale_fill_grey() +
+  labs(
+    title = "SNAP Low-Access Share by Year and Area",
+    x = "Year",
+    y = "SNAP Low-Access Share (%)",
+    fill = "Area"
+  ) +
+  theme_minimal()
 ```
 
 ```{r}
 library(ggplot2)
-ggplot(data2019_clean, aes(x = snap_la_rate)) +
+ggplot(data2019_clean, aes(x = snap_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
     title = "Distribution of SNAP Low-Access Rate, 2019",
@@ -407,7 +721,7 @@ ggplot(data2019_clean, aes(x = snap_la_rate)) +
 
 ```{r}
 library(ggplot2)
-ggplot(data2015_clean, aes(x = snap_la_rate)) +
+ggplot(data2015_clean, aes(x = snap_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
     title = "Distribution of SNAP Low-Access Rate, 2015",
@@ -418,7 +732,7 @@ ggplot(data2015_clean, aes(x = snap_la_rate)) +
 
 ```{r}
 library(ggplot2)
-ggplot(data2019_clean, aes(x = senior_la_rate)) +
+ggplot(data2019_clean, aes(x = senior_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
     title = "Distribution of Senior Low-Access Rate, 2019",
@@ -428,8 +742,7 @@ ggplot(data2019_clean, aes(x = senior_la_rate)) +
 ```
 
 ```{r}
-library(ggplot2)
-ggplot(data2015_clean, aes(x = senior_la_rate)) +
+ggplot(data2015_clean, aes(x = senior_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
     title = "Distribution of Senior Low-Access Rate, 2015",
@@ -437,3 +750,43 @@ ggplot(data2015_clean, aes(x = senior_la_rate)) +
     y = "Number of Census Tracts"
   )
 ```
+
+
+```{r}
+ggplot(
+  combined_data,
+  aes(x = senior_la_pct)
+) +
+  geom_histogram(
+    bins = 30,
+    na.rm = TRUE
+  ) +
+  facet_grid(area ~ year) +
+  labs(
+    title = "Distribution of Senior Low-Access Share",
+    x = "Senior Low-Access Share (%)",
+    y = "Number of Census Tracts"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(
+  combined_data,
+  aes(x = snap_la_pct)
+) +
+  geom_histogram(
+    bins = 30,
+    na.rm = TRUE
+  ) +
+  facet_grid(area ~ year) +
+  labs(
+    title = "Distribution of SNAP Low-Access Share",
+    x = "SNAP Low-Access Share (%)",
+    y = "Number of Census Tracts"
+  ) +
+  theme_minimal()
+```
+
+
+
