@@ -21,6 +21,22 @@ One point of interest was that the 2019 dataset contained a large number of NULL
 
 To enable comparisons between years, our group used both the 2015 and 2019 Food Access Research Atlas datasets. The datasets were straightforward to integrate because they contained consistent and largely homogeneous variable names. We therefore retained the same variables from each dataset, allowing us to make meaningful comparisons in food access between 2015 and 2019.
 
+## Ethics, Privacy & Security
+
+**Ethics**
+
+This project involves data describing vulnerable populations, specifically seniors aged 65 and over and SNAP-receiving households. These populations require discretion as careless findings or framing about them can further stigmatise affected communities. A key consideration for this analysis is avoiding deficit oriented framing, practically, this means describing a tract as “low access” reflects a structural and geographic outcome specifically the distance for a household to supermarkets or transport infrastructure. It is not intended to signify the choices of the individuals living in the household, this is to avoid perpetuating any stereotypes or stigmas. As a result the language of the report has been mindfully selected to reflect this. For example we would state “A tract has a high rate of low-access seniors” instead of language that could be read as describing  a senior or snap receiving households like “seniors in this area don’t shop at super markets” 
+
+Another ethical risk we are considering is an ecological fallacy. All analysis in this project is conducted at the census-tract level which uses aggregated rates for an area rather than individual data. So where a tract is classified as “low access” indicates the aggregate population meets USDA distance thresholds, it does not mean that every individual within that tract lacks access. As a result our conclusions are based on patterns observed in tracts, not on individuals. 
+
+**Privacy**
+
+This project uses only publicly available, government-released data (USDA Food Access Research Atlas and U.S. Census Bureau data), both provided at the census-tract level. We did no original data collection of our own, or have any interaction with the individuals involved with the data. The data is already aggregated tract-areas and released for public use as verified by the U.S. government so the privacy risk to individuals is minimal. The risks too to privacy are not technical with how the data is structured or analysed but in the interpretation of the data. There is still a risk (although very small risk) of individual identification for tracts with very small populations e.g a small amount of senior SNAP households in a rural tract, where in principle it could be easier to infer information about specific households. This represents a limitation of the dataset from a privacy perspective, though it is a low and indirect risk rather than a risk introduced by our analysis.
+
+**Security**
+
+As mentioned in the privacy section this project uses only public, pre-aggregated data. The overall security risk associated with this project is low. We practiced secure data management in this project where we store all our working data and code within a shared private Github repository, accessible only to the members of our group as opposed to a public repository or sharing code in any other external source. This gave us a controlled and access-limited location for our data, code and analysis. With some additional time and resources to allocate into security it would be worthwhile establishing a documented data deletion plan for after the project concludes. 
+
 # DATA 2015
 
 ```{r Data Inputs 2015}
