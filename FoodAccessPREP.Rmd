@@ -25,14 +25,16 @@ To enable comparisons between years, our group used both the 2015 and 2019 Food 
 
 ```{r Data Inputs 2015}
 library(readxl)
-DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", sheet = 3, na = c("", "NULL"))
+DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", 
+                       sheet = 3, na = c("", "NULL"))
 head(DATA2015)
 ```
 
 # DATA 2019
 
 ```{r DATA Inputs 2019}
-DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", sheet = 3, na = c("", "NULL"))
+DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", 
+                       sheet = 3, na = c("", "NULL"))
 head(DATA2019)
 ```
 
