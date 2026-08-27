@@ -1002,7 +1002,7 @@ ggplot(matched_data,aes(x = senior_change)) +
   labs(
     title = "Distribution of Changes in Senior Low-Access Share, 2015–2019",
     x = "Change in percentage points",
-    y = "Number of Census Tracts"
+    y = "Density"
   ) +
   theme_minimal()
 ```
@@ -1036,10 +1036,10 @@ table(
 ```
 
 ```{r}
-matched_stable1 <- matched_data %>%
-  filter(area_2015 == area_2019)
+#matched_stable1 <- matched_data %>%
+  #filter(area_2015 == area_2019)
 
-matched_stable1
+#matched_stable1
 ```
 
 ```{r}
@@ -1050,8 +1050,9 @@ ggplot(matched_stable, aes(x = senior_change)) +
   labs(
     title = "Distribution of Changes in Senior Low-Access Share, 2015–2019",
     x = "Change in percentage points",
-    y = "Number of Census Tracts"
-  ) 
+    y = "Density"
+  ) +
+  theme_minimal()
 ```
 We should use the second which better than last one. Even though we cannot see observable difference, it shows the results which checked: Rural → Urban：10; Urban → Rural：11 .
 There are 21 census tracts deleted.
@@ -1060,29 +1061,6 @@ Therefore, although the second graph does not show any visual difference, it is 
 For rural areas, the comparison always uses a 10-mile measure, and for urban areas, the comparison always uses a 1-mile measure. 
 So, the subsequent 2015–2019 change analysis suggests using "matched_stable".
 
-
-Clean Summary Statistics Section
-```{r}
-summary_table <- combined_data %>%
-  group_by(area, year) %>%
-  summarise(
-    Senior_Mean   = round(mean(senior_la_pct, na.rm = TRUE), 1),
-    Senior_Median = round(median(senior_la_pct, na.rm = TRUE), 1),
-    SNAP_Mean     = round(mean(snap_la_pct, na.rm = TRUE), 1),
-    SNAP_Median   = round(median(snap_la_pct, na.rm = TRUE), 1),
-    n_tracts      = n(),
-    .groups = "drop"
-  )
-
-kable(summary_table,
-      caption = "Table 1: Mean and median low-access share (%) for seniors and SNAP households, by area and year.",
-      col.names = c("Area", "Year", "Senior Mean", "Senior Median",
-                    "SNAP Mean", "SNAP Median", "N Tracts"))
-```
-To talk about...
-median much lower then means = skewed data. Urban vastly outnumber rural. Values increase across all four rows
-
-keeping in mind a rural tract requires households and seniors to be at least 10 miles away compared to a min of 1 
 
 ```{r}
 # Make sure the number of row between two datasets
@@ -1109,9 +1087,32 @@ ggplot(matched_stable,aes(x = snap_change)) +
     title = "Distribution of Changes in SNAP Low-Access Share, 2015–2019",
     x = "Change in percentage points",
     y = "Number of Census Tracts"
-  ) 
+  ) +
+  theme_minimal()
 ```
 
+Clean Summary Statistics Section
+```{r}
+summary_table <- combined_data %>%
+  group_by(area, year) %>%
+  summarise(
+    Senior_Mean   = round(mean(senior_la_pct, na.rm = TRUE), 1),
+    Senior_Median = round(median(senior_la_pct, na.rm = TRUE), 1),
+    SNAP_Mean     = round(mean(snap_la_pct, na.rm = TRUE), 1),
+    SNAP_Median   = round(median(snap_la_pct, na.rm = TRUE), 1),
+    n_tracts      = n(),
+    .groups = "drop"
+  )
+
+kable(summary_table,
+      caption = "Table 1: Mean and median low-access share (%) for seniors and SNAP households, by area and year.",
+      col.names = c("Area", "Year", "Senior Mean", "Senior Median",
+                    "SNAP Mean", "SNAP Median", "N Tracts"))
+```
+To talk about...
+median much lower then means = skewed data. Urban vastly outnumber rural. Values increase across all four rows
+
+keeping in mind a rural tract requires households and seniors to be at least 10 miles away compared to a min of 1 
 
 ```{r}
 library(tidyr)
