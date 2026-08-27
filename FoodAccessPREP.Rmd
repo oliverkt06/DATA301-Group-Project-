@@ -348,6 +348,35 @@ summary(data2019_clean)
 ```
 
 ```{r}
+library(knitr)
+
+dataset_table <- data.frame(
+  Dataset = c("2015 Food Access Research Atlas",
+              "2019 Food Access Research Atlas"),
+  Observations = c(72864, 72531),
+  Variables = c(147, 147),
+  Unit_of_Analysis = c("Census tract", "Census tract"),
+  Main_Data_Types = c(
+    "Geographic identifiers, urban/rural indicator, population counts, food-access measures",
+    "Geographic identifiers, urban/rural indicator, population counts, food-access measures"
+  )
+)
+
+kable(
+  dataset_table,
+  caption = "Structure of the 2015 and 2019 Food Access Research Atlas datasets",
+  col.names = c(
+    "Dataset",
+    "Observations",
+    "Variables",
+    "Unit of Analysis",
+    "Main Data Types"
+  ),
+  align = c("l", "r", "r", "l", "l")
+)
+```
+
+```{r}
 summary_stats <- bind_rows(
   
   data2015_clean %>%
@@ -731,8 +760,8 @@ library(ggplot2)
 ggplot(data2019_clean, aes(x = snap_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
-    title = "Distribution of SNAP Low-Access Rate, 2019",
-    x = "SNAP Low-Access Rate",
+    title = "Distribution of SNAP Low-Access Share, 2019",
+    x = "SNAP Low-Access Share (%)",
     y = "Number of Census Tracts"
   )
 ```
@@ -742,8 +771,8 @@ library(ggplot2)
 ggplot(data2015_clean, aes(x = snap_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
-    title = "Distribution of SNAP Low-Access Rate, 2015",
-    x = "SNAP Low-Access Rate",
+    title = "Distribution of SNAP Low-Access Share, 2015",
+    x = "SNAP Low-Access Share (%)",
     y = "Number of Census Tracts"
   )
 ```
@@ -753,8 +782,8 @@ library(ggplot2)
 ggplot(data2019_clean, aes(x = senior_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
-    title = "Distribution of Senior Low-Access Rate, 2019",
-    x = "Senior Low-Access Rate",
+    title = "Distribution of Senior Low-Access Share, 2019",
+    x = "Senior Low-Access Share (%)",
     y = "Number of Census Tracts"
   )
 ```
@@ -763,8 +792,8 @@ ggplot(data2019_clean, aes(x = senior_la_pct)) +
 ggplot(data2015_clean, aes(x = senior_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
-    title = "Distribution of Senior Low-Access Rate, 2015",
-    x = "Senior Low-Access Rate",
+    title = "Distribution of Senior Low-Access Share, 2015",
+    x = "Senior Low-Access Share (%)",
     y = "Number of Census Tracts"
   )
 ```
