@@ -823,5 +823,53 @@ ggplot(combined_data,aes(x = snap_la_pct)) +
   theme_minimal()
 ```
 
+Clean Summary Statistics Section
 
+```{r}
+summary_table <- combined_data %>%
+  group_by(area, year) %>%
+  summarise(
+    Senior_Mean   = round(mean(senior_la_pct, na.rm = TRUE), 1),
+    Senior_Median = round(median(senior_la_pct, na.rm = TRUE), 1),
+    SNAP_Mean     = round(mean(snap_la_pct, na.rm = TRUE), 1),
+    SNAP_Median   = round(median(snap_la_pct, na.rm = TRUE), 1),
+    n_tracts      = n(),
+    .groups = "drop"
+  )
 
+kable(summary_table,
+      caption = "Table 1: Mean and median low-access share (%) for seniors and SNAP households, by area and year.",
+      col.names = c("Area", "Year", "Senior Mean", "Senior Median",
+                    "SNAP Mean", "SNAP Median", "N Tracts"))
+```
+To talk about...
+median much lower then means = skewed data. Urban vastly outnumber rural. Values increase across all four rows
+
+keeping in mind a rural tract requires households and seniors to be at least 10 miles away compared to a min of 1 
+
+```{r}
+library(tidyr)
+
+dot_data <- summary_table %>%
+  select(area, year, Senior_Mean, SNAP_Mean) %>%
+  pivot_longer(cols = c(Senior_Mean, SNAP_Mean),
+               names_to = "Group", values_to = "Mean_Rate") %>%
+  mutate(Group = recode(Group, Senior_Mean = "Seniors", SNAP_Mean = "SNAP"))
+
+ggplot(dot_data, aes(x = Mean_Rate, y = Group, color = factor(year))) +
+  geom_point(size = 3) +
+  facet_wrap(~area) +
+  labs(
+    title = "Mean Low-Access Share by Group, Area, and Year",
+    x = "Mean Low-Access Share (%)",
+    y = NULL,
+    color = "Year"
+  ) +
+  theme_minimal()
+```
+
+Across both Senior and SNAP low-access shares, 2019 shows a higher mean rate than 2015, and Urban tracts show a higher mean rate than Rural tracts, in both years and for both groups
+
+Because "low-access" is defined using a much stricter distance threshold in urban areas (1 mile) than rural areas (10 miles), a higher urban low-access rate does not necessarily mean urban residents travel further to reach a supermarket than rural residents. This may just reflect that urban areas are held to a stricter access standard. A rural resident traveling several miles to a store may still count as "having access" under the rural threshold, while a much shorter distance in a city would count as "low access." 
+
+As a result, the lower mean low-access share in rural areas should not be read as evidence that rural food access is genuinely better. Rural residents may need to travel considerably farther in absolute terms before being classified as low-access at all, meaning the rural rate likely understates the true burden of distance compared to the urban rate. This distinction should be kept in mind whenever urban and rural low-access rates are compared directly in this report, rather than treating them as measuring the same underlying concept.
