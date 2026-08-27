@@ -800,14 +800,8 @@ ggplot(data2015_clean, aes(x = senior_la_pct)) +
 
 
 ```{r}
-ggplot(
-  combined_data,
-  aes(x = senior_la_pct)
-) +
-  geom_histogram(
-    bins = 30,
-    na.rm = TRUE
-  ) +
+ggplot(combined_data, aes(x = senior_la_pct)) +
+  geom_histogram(bins = 30, na.rm = TRUE) +
   facet_grid(area ~ year) +
   labs(
     title = "Distribution of Senior Low-Access Share",
@@ -818,14 +812,8 @@ ggplot(
 ```
 
 ```{r}
-ggplot(
-  combined_data,
-  aes(x = snap_la_pct)
-) +
-  geom_histogram(
-    bins = 30,
-    na.rm = TRUE
-  ) +
+ggplot(combined_data,aes(x = snap_la_pct)) +
+  geom_histogram(bins = 30, na.rm = TRUE) +
   facet_grid(area ~ year) +
   labs(
     title = "Distribution of SNAP Low-Access Share",
