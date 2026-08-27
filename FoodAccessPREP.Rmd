@@ -850,6 +850,7 @@ matched_data %>%
   )
 
 ```
+
 ```{r}
 matched_data %>%
   group_by(area_2015) %>%
@@ -992,22 +993,12 @@ ggplot(combined_data,aes(x = snap_la_pct)) +
   theme_minimal()
 ```
 
+
 ```{r}
-ggplot(
-  matched_data,
-  aes(x = senior_change)
-) +
-  geom_histogram(
-    bins = 50,
-    na.rm = TRUE
-  ) +
-  facet_wrap(
-    ~ area_2015
-  ) +
-  geom_vline(
-    xintercept = 0,
-    linetype = "dashed"
-  ) +
+ggplot(matched_data,aes(x = senior_change)) +
+  geom_histogram(bins = 50, na.rm = TRUE) +
+  facet_wrap(~ area_2015) +
+  geom_vline(xintercept = 0,linetype = "dashed") +
   labs(
     title = "Distribution of Changes in Senior Low-Access Share, 2015–2019",
     x = "Change in percentage points",
@@ -1026,33 +1017,24 @@ change_summary <- matched_data %>%
   group_by(area_2015) %>%
   summarise(
     n = sum(!is.na(senior_change)),
-    
-    median_change =
-      median(senior_change, na.rm = TRUE),
-    
-    mean_change =
-      mean(senior_change, na.rm = TRUE),
-    
-    pct_increase =
-      mean(senior_change > 0.1, na.rm = TRUE) * 100,
-    
-    pct_decrease =
-      mean(senior_change < -0.1, na.rm = TRUE) * 100,
-    
-    pct_stable =
-      mean(abs(senior_change) <= 0.1, na.rm = TRUE) * 100,
-    
+    median_change =median(senior_change, na.rm = TRUE),
+    mean_change =mean(senior_change, na.rm = TRUE),
+    pct_increase =mean(senior_change > 0.1, na.rm = TRUE) * 100,
+    pct_decrease =mean(senior_change < -0.1, na.rm = TRUE) * 100,
+    pct_stable = mean(abs(senior_change) <= 0.1, na.rm = TRUE) * 100,
     .groups = "drop"
   )
 
 change_summary
 ```
+
 ```{r}
 table(
   matched_data$area_2015,
   matched_data$area_2019
 )
 ```
+
 ```{r}
 matched_stable1 <- matched_data %>%
   filter(area_2015 == area_2019)
@@ -1061,25 +1043,15 @@ matched_stable1
 ```
 
 ```{r}
-ggplot(
-  matched_stable,
-  aes(x = senior_change)
-) +
-  geom_histogram(
-    bins = 50,
-    na.rm = TRUE
-  ) +
+ggplot(matched_stable, aes(x = senior_change)) +
+  geom_histogram(bins = 50, na.rm = TRUE) +
   facet_wrap(~ area_2015) +
-  geom_vline(
-    xintercept = 0,
-    linetype = "dashed"
-  ) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
   labs(
     title = "Distribution of Changes in Senior Low-Access Share, 2015–2019",
     x = "Change in percentage points",
     y = "Number of Census Tracts"
-  ) +
-  theme_minimal()
+  ) 
 ```
 We should use the second which better than last one. Even though we cannot see observable difference, it shows the results which checked: Rural → Urban：10; Urban → Rural：11 .
 There are 21 census tracts deleted.
@@ -1088,6 +1060,29 @@ Therefore, although the second graph does not show any visual difference, it is 
 For rural areas, the comparison always uses a 10-mile measure, and for urban areas, the comparison always uses a 1-mile measure. 
 So, the subsequent 2015–2019 change analysis suggests using "matched_stable".
 
+
+Clean Summary Statistics Section
+```{r}
+summary_table <- combined_data %>%
+  group_by(area, year) %>%
+  summarise(
+    Senior_Mean   = round(mean(senior_la_pct, na.rm = TRUE), 1),
+    Senior_Median = round(median(senior_la_pct, na.rm = TRUE), 1),
+    SNAP_Mean     = round(mean(snap_la_pct, na.rm = TRUE), 1),
+    SNAP_Median   = round(median(snap_la_pct, na.rm = TRUE), 1),
+    n_tracts      = n(),
+    .groups = "drop"
+  )
+
+kable(summary_table,
+      caption = "Table 1: Mean and median low-access share (%) for seniors and SNAP households, by area and year.",
+      col.names = c("Area", "Year", "Senior Mean", "Senior Median",
+                    "SNAP Mean", "SNAP Median", "N Tracts"))
+```
+To talk about...
+median much lower then means = skewed data. Urban vastly outnumber rural. Values increase across all four rows
+
+keeping in mind a rural tract requires households and seniors to be at least 10 miles away compared to a min of 1 
 
 ```{r}
 # Make sure the number of row between two datasets
@@ -1114,9 +1109,35 @@ ggplot(matched_stable,aes(x = snap_change)) +
     title = "Distribution of Changes in SNAP Low-Access Share, 2015–2019",
     x = "Change in percentage points",
     y = "Number of Census Tracts"
+  ) 
+```
+
+
+```{r}
+library(tidyr)
+
+dot_data <- summary_table %>%
+  select(area, year, Senior_Mean, SNAP_Mean) %>%
+  pivot_longer(cols = c(Senior_Mean, SNAP_Mean),
+               names_to = "Group", values_to = "Mean_Rate") %>%
+  mutate(Group = recode(Group, Senior_Mean = "Seniors", SNAP_Mean = "SNAP"))
+
+ggplot(dot_data, aes(x = Mean_Rate, y = Group, color = factor(year))) +
+  geom_point(size = 3) +
+  facet_wrap(~area) +
+  labs(
+    title = "Mean Low-Access Share by Group, Area, and Year",
+    x = "Mean Low-Access Share (%)",
+    y = NULL,
+    color = "Year"
   ) +
   theme_minimal()
 ```
+Across both Senior and SNAP low-access shares, 2019 shows a higher mean rate than 2015, and Urban tracts show a higher mean rate than Rural tracts, in both years and for both groups
+
+Because "low-access" is defined using a much stricter distance threshold in urban areas (1 mile) than rural areas (10 miles), a higher urban low-access rate does not necessarily mean urban residents travel further to reach a supermarket than rural residents. This may just reflect that urban areas are held to a stricter access standard. A rural resident traveling several miles to a store may still count as "having access" under the rural threshold, while a much shorter distance in a city would count as "low access." 
+
+As a result, the lower mean low-access share in rural areas should not be read as evidence that rural food access is genuinely better. Rural residents may need to travel considerably farther in absolute terms before being classified as low-access at all, meaning the rural rate likely understates the true burden of distance compared to the urban rate. This distinction should be kept in mind whenever urban and rural low-access rates are compared directly in this report, rather than treating them as measuring the same underlying concept.
 
 ```{r}
 matched_stable %>%
@@ -1135,4 +1156,5 @@ matched_stable %>%
 Then, we can compare:
 Senior change: Rural vs Urban
 SNAP change: Rural vs Urban
+
 
