@@ -783,6 +783,8 @@ ggplot(
 ```
 
 ```{r}
+# Match the same census tract in 2015 and 2019, and calculate the changes in the share of seniors and SNAP low-access individuals between the two years.
+
 matched_data <- data2015_clean %>%
   select(
     censustract,
@@ -910,9 +912,29 @@ ggplot(
   ) +
   theme_minimal()
 ```
+
+```{r}
+matched_stable <- matched_data %>%
+  filter(area_2015 == area_2019)
+
+matched_stable
+```
+
 ```{r}
 matched_stable %>%
   group_by(area_2015) %>%
+  summarise(
+    n = sum(!is.na(snap_change)),
+    Q1 = quantile(snap_change, 0.25, na.rm = TRUE),
+    Median = median(snap_change, na.rm = TRUE),
+    Q3 = quantile(snap_change, 0.75, na.rm = TRUE),
+    Min = min(snap_change, na.rm = TRUE),
+    Max = max(snap_change, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+matched_stable %>%
+  group_by(area_2019) %>%
   summarise(
     n = sum(!is.na(snap_change)),
     Q1 = quantile(snap_change, 0.25, na.rm = TRUE),
@@ -1035,12 +1057,7 @@ table(
 )
 ```
 
-```{r}
-#matched_stable1 <- matched_data %>%
-  #filter(area_2015 == area_2019)
 
-#matched_stable1
-```
 
 ```{r}
 ggplot(matched_stable, aes(x = senior_change)) +
@@ -1157,5 +1174,154 @@ matched_stable %>%
 Then, we can compare:
 Senior change: Rural vs Urban
 SNAP change: Rural vs Urban
+
+```{r}
+senior_paired_data <- matched_stable %>%
+  filter(
+    !is.na(senior_pct_2015),
+    !is.na(senior_pct_2019)
+  )
+
+senior_paired <- senior_paired_data %>%
+  group_by(area_2015) %>%
+  summarise(
+    N = n(),
+    
+    Mean_2015 = mean(senior_pct_2015),
+    Mean_2019 = mean(senior_pct_2019),
+    
+    Median_2015 = median(senior_pct_2015),
+    Median_2019 = median(senior_pct_2019),
+    
+    Mean_Change = mean(senior_change),
+    Median_Change = median(senior_change),
+    
+    .groups = "drop"
+  ) %>%
+  mutate(
+    across(
+      c(
+        Mean_2015,
+        Mean_2019,
+        Median_2015,
+        Median_2019,
+        Mean_Change,
+        Median_Change
+      ),
+      ~ round(.x, 2)
+    )
+  )
+
+kable(
+  senior_paired,
+  caption = "Paired summary of Senior low-access share, 2015–2019",
+  col.names = c(
+    "Area",
+    "N",
+    "Mean 2015 (%)",
+    "Mean 2019 (%)",
+    "Median 2015 (%)",
+    "Median 2019 (%)",
+    "Mean Change (pp)",
+    "Median Change (pp)"
+  )
+)
+```
+
+
+```{r}
+snap_paired_data <- matched_stable %>%
+  filter(
+    !is.na(snap_pct_2015),
+    !is.na(snap_pct_2019)
+  )
+
+snap_paired <- snap_paired_data %>%
+  group_by(area_2015) %>%
+  summarise(
+    N = n(),
+    
+    Mean_2015 = mean(snap_pct_2015),
+    Mean_2019 = mean(snap_pct_2019),
+    
+    Median_2015 = median(snap_pct_2015),
+    Median_2019 = median(snap_pct_2019),
+    
+    Mean_Change = mean(snap_change),
+    Median_Change = median(snap_change),
+    
+    .groups = "drop"
+  ) %>%
+  mutate(
+    across(
+      c(
+        Mean_2015,
+        Mean_2019,
+        Median_2015,
+        Median_2019,
+        Mean_Change,
+        Median_Change
+      ),
+      ~ round(.x, 2)
+    )
+  )
+
+kable(
+  snap_paired,
+  caption = "Paired summary of SNAP low-access share, 2015–2019",
+  col.names = c(
+    "Area",
+    "N",
+    "Mean 2015 (%)",
+    "Mean 2019 (%)",
+    "Median 2015 (%)",
+    "Median 2019 (%)",
+    "Mean Change (pp)",
+    "Median Change (pp)"
+  )
+)
+```
+```{r}
+paired_summary <- bind_rows(
+  senior_paired %>%
+    mutate(Group = "Senior"),
+  
+  snap_paired %>%
+    mutate(Group = "SNAP")
+) %>%
+  select(
+    Group,
+    area_2015,
+    N,
+    Mean_2015,
+    Mean_2019,
+    Median_2015,
+    Median_2019,
+    Mean_Change,
+    Median_Change
+  ) %>%
+  arrange(Group, area_2015)
+
+kable(
+  paired_summary,
+  caption = "Paired summary of Senior and SNAP low-access shares, 2015–2019",
+  col.names = c(
+    "Group",
+    "Area",
+    "N",
+    "Mean 2015 (%)",
+    "Mean 2019 (%)",
+    "Median 2015 (%)",
+    "Median 2019 (%)",
+    "Mean Change (pp)",
+    "Median Change (pp)"
+  ),
+  align = c(
+    "l", "l", "r",
+    "r", "r", "r", "r", "r", "r"
+  )
+)
+```
+
 
 
