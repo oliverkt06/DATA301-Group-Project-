@@ -871,7 +871,7 @@ From the summary, especially Urban,
 Q1 = -4.019 × 10^-14
 Median = 0
 Q3 = 4.974 × 10^-14
-The real meaning of these three number is 0% points. Thus, the boxplot of Urban: Q1 ≈ Median ≈ Q3 ≈ 0, it shows the box was naturally compressed into a line near y=0.
+The real meaning of these three number is 0% points. Thus, the boxplot of Urban: Q1 $\approx$ Median $\approx$ Q3 $\approx$ 0, it shows the box was naturally compressed into a line near y=0.
 
 While, Rural is not completely 0: 
 Q1 ≈ -0.014
