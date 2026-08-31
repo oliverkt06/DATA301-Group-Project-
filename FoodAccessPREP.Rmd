@@ -39,17 +39,13 @@ As mentioned in the privacy section this project uses only public, pre-aggregate
 
 ## Data Loading and Preparing
 
-**DATA 2015**
-
-```{r Read 2015}
+```{r Read 2015, echo = FALSE}
 library(readxl)
 DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", 
                        sheet = 3, na = c("", "NULL"))
 ```
 
-**DATA 2019**
-
-```{r Read 2019}
+```{r Read 2019, echo = FALSE}
 DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", 
                        sheet = 3, na = c("", "NULL"))
 ```
@@ -69,14 +65,14 @@ names(DATA2015) <- tolower(names(DATA2015))
 names(DATA2019) <- tolower(names(DATA2019))
 ```
 
-```{r}
+```{r, include = FALSE}
 library(dplyr)
 library(tidyr)
 library(knitr)
 library(ggplot2)
 ```
 
-```{r}
+```{r echo = FALSE}
 # Select variables we need
 data2015_clean <- DATA2015 %>%
   select(

@@ -1,6 +1,6 @@
 ---
 title: "FoodAccessPREP"
-author: "Oliver Temel"
+author: "Oliver Temel, Mairangi Campbell and Jiayi Lu"
 date: "2026-08-19"
 output: pdf_document
 editor_options: 
@@ -12,7 +12,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**Background and Data**
+# Background and Data
 
 Our group used the 2015 and 2019 Food Access Research Atlas datasets,
 available through the U.S. Department of Agriculture Economic Research
@@ -52,7 +52,7 @@ largely homogeneous variable names. We therefore retained the same
 variables from each dataset, allowing us to make meaningful comparisons
 in food access between 2015 and 2019.
 
-## Ethics, Privacy & Security
+# Ethics, Privacy & Security
 
 **Ethics**
 
@@ -111,20 +111,18 @@ data, code and analysis. With some additional time and resources to
 allocate into security it would be worthwhile establishing a documented
 data deletion plan for after the project concludes.
 
-# Data Loading and Cleaning
-
-```{r 2015 load}
+```{r 2015 load, echo = FALSE}
 library(readxl)
 DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", 
                        sheet = 3, na = c("", "NULL"))
 ```
 
-```{r 2019 load}
+```{r 2019 load, echo = FALSE}
 DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", 
                        sheet = 3, na = c("", "NULL"))
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 dim(DATA2015)
 dim(DATA2019)
 names(DATA2015)
@@ -133,13 +131,13 @@ str(DATA2015)
 str(DATA2019)
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 # To Unify variable names
 names(DATA2015) <- tolower(names(DATA2015))
 names(DATA2019) <- tolower(names(DATA2019))
 ```
 
-```{r, echo = FALSE}
+```{r, include=FALSE}
 library(dplyr)
 library(tidyr)
 library(knitr)
@@ -159,7 +157,7 @@ data2019_clean <- DATA2019 %>%
 )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 numeric_vars <- c(
   "urban", "pop2010", "ohu2010", "laseniors1", "laseniors10", "laseniors1share", "laseniors10share", "lasnap1", "lasnap10", "lasnap1share", "lasnap10share", "tractseniors", "tractsnap"
 )
@@ -188,7 +186,7 @@ combined_data <- bind_rows(
 combined_data
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 sapply(
   data2015_clean[numeric_vars],
   class
@@ -233,7 +231,7 @@ data2019_clean <- data2019_clean %>%
   )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 # 2015 of senior and snap
 data2015_clean <- data2015_clean %>%
   mutate(
@@ -267,7 +265,7 @@ data2019_clean <- data2019_clean %>%
   )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 # Show precentage
 # 2015
 data2015_clean <- data2015_clean %>%
@@ -302,7 +300,7 @@ data2019_clean <- data2019_clean %>%
   )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 # Seniors
 data2015_clean <- data2015_clean %>%
   mutate(
@@ -344,12 +342,12 @@ data2019_clean <- data2019_clean %>%
   )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 summary(data2015_clean)
 summary(data2019_clean)
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 #data2019_clean <- data2019_clean %>%
 #  mutate(
 #    across(
@@ -360,11 +358,11 @@ summary(data2019_clean)
 #  )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 summary(data2019_clean)
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 library(knitr)
 
 dataset_table <- data.frame(
@@ -393,7 +391,7 @@ kable(
 )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 summary_stats <- bind_rows(
   
   data2015_clean %>%
@@ -441,7 +439,7 @@ summary_stats <- bind_rows(
 summary_stats
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 kable(
   summary_stats,
   caption = "Summary Statistics for Senior and SNAP Low-Access Shares, 2015 and 2019",
@@ -455,7 +453,7 @@ kable(
 )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 # Check whether over 100
 data2015_clean %>%
   summarise(
@@ -470,7 +468,7 @@ data2019_clean %>%
   )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 data2015_clean %>%
   filter(snap_la_pct > 100) %>%
   select(
@@ -494,7 +492,7 @@ data2019_clean %>%
   )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include=FALSE}
 options(digits = 15)
 
 data2015_clean %>%
@@ -520,7 +518,7 @@ data2019_clean %>%
   )
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 combined_data <- bind_rows(
   data2015_clean,
   data2019_clean
@@ -528,7 +526,7 @@ combined_data <- bind_rows(
 combined_data
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 dim(combined_data)
 table(combined_data$year)
 table(combined_data$area, useNA = "ifany")
@@ -539,7 +537,7 @@ dataset containing 145,395 census-tract observations. Of these, 110,341
 were classified as urban and 35,054 as rural, with no missing values in
 the urban–rural classification.
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 summary_table <- combined_data %>%
   group_by(year, area) %>%
   summarise(
@@ -569,7 +567,7 @@ summary_table <- combined_data %>%
 summary_table
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 summary_table_report <- summary_table %>%
   mutate(
     across(
@@ -586,25 +584,25 @@ summary_table_report <- summary_table %>%
 summary_table_report
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 dim(data2015_clean)
 names(data2015_clean)
 str(data2015_clean)
 summary(data2015_clean)
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 dim(data2019_clean)
 names(data2019_clean)
 str(data2019_clean)
 summary(data2019_clean)
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 colSums(is.na(data2019_clean))
 ```
 
-```{r}
+```{r, echo = FALSE, include=FALSE}
 colSums(is.na(data2015_clean))
 ```
 
@@ -640,7 +638,7 @@ summary_table <- combined_data %>%
   )
 
 kable(summary_table,
-      caption = "Table 1: Mean and median low-access share (%) for seniors and SNAP households, by area and year.",
+      caption = "Mean and median low-access share (%) for seniors and SNAP households, by area and year.",
       col.names = c("Area", "Year", "Senior Mean", "Senior Median",
                     "SNAP Mean", "SNAP Median", "N Tracts"))
 ```
@@ -667,7 +665,7 @@ missing_table <- data.frame(
 )
 
 kable(missing_table,
-      caption = "Table 2: Number of missing Senior and SNAP low-access share observations, by year.",
+      caption = "Number of missing Senior and SNAP low-access share observations, by year.",
       col.names = c("Year", "Senior Missing", "SNAP Missing"))
 ```
 
@@ -777,7 +775,7 @@ interpreted cautiously because of substantial missing data in 2019.
 To examine changes between 2015 and 2019 more directly, census tracts in
 the two datasets were matched using their Census Tract identifiers.
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 # Match the same census tract in 2015 and 2019, and calculate the changes in the share of seniors and SNAP low-access individuals between the two years.
 
 matched_data <- data2015_clean %>%
@@ -805,7 +803,7 @@ matched_data <- data2015_clean %>%
 matched_data
 ```
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 dim(matched_data)
 sum(!is.na(matched_data$senior_change))
 sum(!is.na(matched_data$snap_change))
@@ -826,14 +824,14 @@ ggplot(
   geom_boxplot(na.rm = TRUE) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(
-    title = "Change in Senior Low-Access Share, 2015–2019",
+    title = "Change in Senior Low-Access Share, 2015-2019",
     x = "Area",
     y = "Change in percentage points"
   ) +
   theme_minimal()
 ```
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 # Check the boxplot why is the line 
 matched_data %>%
   group_by(area_2015) %>%
@@ -848,7 +846,7 @@ matched_data %>%
 
 ```
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 matched_data %>%
   group_by(area_2015) %>%
   summarise(
@@ -863,17 +861,17 @@ matched_data %>%
 Reason for why choose histogram to show the Change in Senior Low-Access
 Share between 2015 and 2019: Based on the summary, we find the boxplot
 is right. However, the vast majority of changes in census tracts are
-very close to zero. From the summary, especially Urban, Q1 = -4.019 ×
-10\^-14 Median = 0 Q3 = 4.974 × 10\^-14 The real meaning of these three
+very close to zero. From the summary, especially Urban, Q1 = -4.019 x
+10\^-14 Median = 0 Q3 = 4.974 x 10\^-14 The real meaning of these three
 number is 0% points. Thus, the boxplot of Urban: Q1 $\approx$ Median
 $\approx$ Q3 $\approx$ 0, it shows the box was naturally compressed into
 a line near y=0.
 
-While, Rural is not completely 0: Q1 ≈ -0.014 Median = 0 Q3 ≈ 0.052
-However, the IQR just around 0.052−(−0.014) ≈ 0.066. There is the very
-small percentage points. Compare the Min(-38.16) and Max(+40.72), so the
-vertical axis is stretched very wide to accommodate these extreme
-changes, making the box even less visible.
+While, Rural is not completely 0: Q1 $\approx$ -0.014 Median = 0 Q3
+$\approx$ 0.052 However, the IQR just around 0.052-(-0.014) $\approx$
+0.066. There is the very small percentage points. Compare the
+Min(-38.16) and Max(+40.72), so the vertical axis is stretched very wide
+to accommodate these extreme changes, making the box even less visible.
 
 The key finding We cannot be fully trust "pct_exact_zero". You now
 obtain: Rural: 10.41% Urban: 15.50% It seems that only 10–15% have
@@ -895,14 +893,14 @@ ggplot(
   geom_boxplot(na.rm = TRUE) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(
-    title = "Change in SNAP Low-Access Share, 2015–2019",
+    title = "Change in SNAP Low-Access Share, 2015-2019",
     x = "Area",
     y = "Change in percentage points"
   ) +
   theme_minimal()
 ```
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 matched_stable <- matched_data %>%
   filter(area_2015 == area_2019)
 
@@ -944,7 +942,7 @@ ggplot(matched_data,aes(x = senior_change)) +
   facet_wrap(~ area_2015) +
   geom_vline(xintercept = 0,linetype = "dashed") +
   labs(
-    title = "Distribution of Changes in Senior Low-Access Share, 2015–2019 (unfiltered)",
+    title = "Distribution of Changes in Senior Low-Access Share, 2015-2019 (unfiltered)",
     x = "Change in percentage points",
     y = "Density"
   ) +
@@ -955,7 +953,7 @@ This will show more clearly than boxplot: A large number of tracts are
 concentrated around 0; Which ones are increases? Which ones are
 reductions? Is the distribution of Urban and Rural areas different?
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 change_summary <- matched_data %>%
   group_by(area_2015) %>%
   summarise(
@@ -971,7 +969,7 @@ change_summary <- matched_data %>%
 change_summary
 ```
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 table(
   matched_data$area_2015,
   matched_data$area_2019
@@ -980,16 +978,16 @@ table(
 
 We should use the second which better than last one. Even though we
 cannot see observable difference, it shows the results which checked:
-Rural → Urban：10; Urban → Rural：11 . There are 21 census tracts
+Rural to Urban: 10; Urban to Rural: 11 . There are 21 census tracts
 deleted.
 
 Therefore, although the second graph does not show any visual
 difference, it is more rigorous in its approach because it ensures that:
 For rural areas, the comparison always uses a 10-mile measure, and for
 urban areas, the comparison always uses a 1-mile measure. So, the
-subsequent 2015–2019 change analysis suggests using "matched_stable".
+subsequent 2015 - 2019 change analysis suggests using "matched_stable".
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 # Make sure the number of row between two datasets
 nrow(matched_data)
 nrow(matched_stable)
@@ -997,7 +995,7 @@ nrow(matched_stable)
 nrow(matched_data) - nrow(matched_stable)
 ```
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 matched_stable <- matched_stable %>%
   mutate(snap_change = snap_pct_2019 - snap_pct_2015)
 
@@ -1006,29 +1004,12 @@ matched_stable
 
 For the paired analysis, only census tracts with non-missing low-access
 shares in both 2015 and 2019 were included. Change was calculated as:
-Change= Low-access share2019 − Low-access share2015 and is reported in
+Change= Low-access share2019 - Low-access share2015 and is reported in
 percentage points. Positive values therefore represent an increase in
 low-access share between 2015 and 2019, while negative values represent
 a decrease.
 
-From Table 3, we compared the different groups with the different areas
-between 2015 and 2019. For seniors, the paired mean low-access share
-increased only slightly between 2015 and 2019. In rural census tracts,
-the mean increased from 3.94% to 3.96%, corresponding to an average
-increase of 0.02 percentage points. In urban census tracts, the mean
-increased from 5.21% to 5.32%, an average increase of 0.11 percentage
-points. The median change was zero in both rural and urban tracts,
-indicating that the typical matched census tract experienced little or
-no change. For SNAP households, the direction of the average change
-differed from that observed for seniors. The mean low-access share
-decreased from 2.91% to 2.77% in rural census tracts, corresponding to a
-mean change of -0.14 percentage points. In urban census tracts, the mean
-decreased from 4.40% to 4.33%, corresponding to a mean change of -0.07
-percentage points. However, the median change was again zero in both
-groups, suggesting that changes for a typical matched census tract were
-very small.
-
-```{r}
+```{r, echo = FALSE, include = FALSE}
 senior_paired_data <- matched_stable %>%
   filter(
     !is.na(senior_pct_2015),
@@ -1067,7 +1048,7 @@ senior_paired <- senior_paired_data %>%
 
 kable(
   senior_paired,
-  caption = "Paired summary of Senior low-access share, 2015–2019",
+  caption = "Paired summary of Senior low-access share, 2015-2019",
   col.names = c(
     "Area",
     "N",
@@ -1081,7 +1062,7 @@ kable(
 )
 ```
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 snap_paired_data <- matched_stable %>%
   filter(
     !is.na(snap_pct_2015),
@@ -1120,7 +1101,7 @@ snap_paired <- snap_paired_data %>%
 
 kable(
   snap_paired,
-  caption = "Paired summary of SNAP low-access share, 2015–2019",
+  caption = "Paired summary of SNAP low-access share, 2015-2019",
   col.names = c(
     "Area",
     "N",
@@ -1157,7 +1138,7 @@ paired_summary <- bind_rows(
 
 kable(
   paired_summary,
-  caption = "Table 3: Paired summary of Senior and SNAP low-access shares, 2015–2019",
+  caption = "Paired summary of Senior and SNAP low-access shares, 2015-2019",
   col.names = c(
     "Group",
     "Area",
@@ -1176,6 +1157,25 @@ kable(
 )
 ```
 
+From Table 3, we compared the different groups with the different areas
+between 2015 and 2019. For seniors, the paired mean low-access share
+increased only slightly between 2015 and 2019. In rural census tracts,
+the mean increased from 3.94% to 3.96%, corresponding to an average
+increase of 0.02 percentage points. In urban census tracts, the mean
+increased from 5.21% to 5.32%, an average increase of 0.11 percentage
+points. The median change was zero in both rural and urban tracts,
+indicating that the typical matched census tract experienced little or
+no change. For SNAP households, the direction of the average change
+differed from that observed for seniors. The mean low-access share
+decreased from 2.91% to 2.77% in rural census tracts, corresponding to a
+mean change of -0.14 percentage points. In urban census tracts, the mean
+decreased from 4.40% to 4.33%, corresponding to a mean change of -0.07
+percentage points. However, the median change was again zero in both
+groups, suggesting that changes for a typical matched census tract were
+very small.
+
+
+
 Figure 5 shows that changes in senior low-access share were strongly
 concentrated around zero in both rural and urban census tracts. This is
 consistent with the zero median changes reported in Table 3. Although
@@ -1188,7 +1188,7 @@ ggplot(matched_stable, aes(x = senior_change)) +
   facet_wrap(~ area_2015) +
   geom_vline(xintercept = 0, linetype = "dashed") +
   labs(
-    title = "Figure 5: Distribution of Changes in Senior Low-Access Share, 2015–2019",
+    title = "Figure 5: Distribution of Changes in Senior Low-Access Share, 2015-2019",
     x = "Change in percentage points",
     y = "Density"
   ) +
@@ -1208,7 +1208,7 @@ ggplot(matched_stable,aes(x = snap_change)) +
   facet_wrap(~ area_2015) +
   geom_vline(xintercept = 0, linetype = "dashed") +
   labs(
-    title = "Figure 6: Distribution of Changes in SNAP Low-Access Share, 2015–2019",
+    title = "Figure 6: Distribution of Changes in SNAP Low-Access Share, 2015-2019",
     x = "Change in percentage points",
     y = "Number of Census Tracts"
   ) +
