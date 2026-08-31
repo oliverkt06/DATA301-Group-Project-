@@ -25,9 +25,9 @@ To enable comparisons between years, our group used both the 2015 and 2019 Food 
 
 **Ethics**
 
-This project involves data describing vulnerable populations, specifically seniors aged 65 and over and SNAP-receiving households. These populations require discretion as careless findings or framing about them can further stigmatise affected communities. A key consideration for this analysis is avoiding deficit oriented framing, practically, this means describing a tract as “low access” reflects a structural and geographic outcome specifically the distance for a household to supermarkets or transport infrastructure. It is not intended to signify the choices of the individuals living in the household, this is to avoid perpetuating any stereotypes or stigmas. As a result the language of the report has been mindfully selected to reflect this. For example we would state “A tract has a high rate of low-access seniors” instead of language that could be read as describing  a senior or snap receiving households like “seniors in this area don’t shop at super markets” 
+This project involves data describing vulnerable populations, specifically seniors aged 65 and over and SNAP-receiving households. These populations require discretion as careless findings or framing about them can further stigmatise affected communities. A key consideration for this analysis is avoiding deficit oriented framing, practically, this means describing a tract as “low access” reflects a structural and geographic outcome specifically the distance for a household to supermarkets or transport infrastructure. It is not intended to signify the choices of the individuals living in the household, this is to avoid perpetuating any stereotypes or stigmas. As a result the language of the report has been mindfully selected to reflect this. For example we would state “A tract has a high rate of low-access seniors” instead of language that could be read as describing a senior or snap receiving households like “seniors in this area don’t shop at super markets”
 
-Another ethical risk we are considering is an ecological fallacy. All analysis in this project is conducted at the census-tract level which uses aggregated rates for an area rather than individual data. So where a tract is classified as “low access” indicates the aggregate population meets USDA distance thresholds, it does not mean that every individual within that tract lacks access. As a result our conclusions are based on patterns observed in tracts, not on individuals. 
+Another ethical risk we are considering is an ecological fallacy. All analysis in this project is conducted at the census-tract level which uses aggregated rates for an area rather than individual data. So where a tract is classified as “low access” indicates the aggregate population meets USDA distance thresholds, it does not mean that every individual within that tract lacks access. As a result our conclusions are based on patterns observed in tracts, not on individuals.
 
 **Privacy**
 
@@ -35,43 +35,39 @@ This project uses only publicly available, government-released data (USDA Food A
 
 **Security**
 
-As mentioned in the privacy section this project uses only public, pre-aggregated data. The overall security risk associated with this project is low. We practiced secure data management in this project where we store all our working data and code within a shared private Github repository, accessible only to the members of our group as opposed to a public repository or sharing code in any other external source. This gave us a controlled and access-limited location for our data, code and analysis. With some additional time and resources to allocate into security it would be worthwhile establishing a documented data deletion plan for after the project concludes. 
+As mentioned in the privacy section this project uses only public, pre-aggregated data. The overall security risk associated with this project is low. We practiced secure data management in this project where we store all our working data and code within a shared private Github repository, accessible only to the members of our group as opposed to a public repository or sharing code in any other external source. This gave us a controlled and access-limited location for our data, code and analysis. With some additional time and resources to allocate into security it would be worthwhile establishing a documented data deletion plan for after the project concludes.
 
-# DATA 2015
+## Data Loading and Preparing
 
-```{r Data Inputs 2015}
+**DATA 2015**
+
+```{r Read 2015}
 library(readxl)
 DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", 
                        sheet = 3, na = c("", "NULL"))
-head(DATA2015)
 ```
 
-# DATA 2019
+**DATA 2019**
 
-```{r DATA Inputs 2019}
+```{r Read 2019}
 DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", 
                        sheet = 3, na = c("", "NULL"))
-head(DATA2019)
 ```
 
-```{r}
+```{r, include = FALSE, echo = FALSE}
 dim(DATA2015)
 dim(DATA2019)
-
 names(DATA2015)
 names(DATA2019)
-
 str(DATA2015)
 str(DATA2019)
-
 ```
 
-```{r}
+```{r include = FALSE}
 # To Unify variable names
 names(DATA2015) <- tolower(names(DATA2015))
 names(DATA2019) <- tolower(names(DATA2019))
 ```
-
 
 ```{r}
 library(dplyr)
@@ -84,48 +80,12 @@ library(ggplot2)
 # Select variables we need
 data2015_clean <- DATA2015 %>%
   select(
-    censustract,
-    state,
-    county,
-    urban,
-    pop2010,
-    ohu2010,
-    laseniors1,
-    laseniors10,
-    lasnap1,
-    laseniors1share,
-    laseniors10share,
-    lasnap1share,
-    lasnap10share,
-    lasnap10,
-    laseniors20,
-    laseniorshalf,
-    laseniorshalfshare,
-    tractseniors,
-    tractsnap,
+    censustract, state, county, urban, pop2010, ohu2010, laseniors1, laseniors10, lasnap1, laseniors1share, laseniors10share, lasnap1share, lasnap10share, lasnap10, laseniors20, laseniorshalf, laseniorshalfshare, tractseniors, tractsnap
   )
 
 data2019_clean <- DATA2019 %>%
   select(
-    censustract,
-    state,
-    county,
-    urban,
-    pop2010,
-    ohu2010,
-    laseniors1,
-    laseniors10,
-    laseniors1share,
-    laseniors10share,
-    lasnap1share,
-    lasnap10share,
-    lasnap1,
-    lasnap10,
-    laseniors20,
-    laseniorshalf,
-    laseniorshalfshare,
-    tractseniors,
-    tractsnap, 
+    censustract, state, county, urban, pop2010, ohu2010, laseniors1, laseniors10, laseniors1share, laseniors10share, lasnap1share, lasnap10share, lasnap1, lasnap10, laseniors20, laseniorshalf, laseniorshalfshare, tractseniors, tractsnap, 
 )
 ```
 
@@ -283,7 +243,6 @@ data2019_clean <- data2019_clean %>%
     )
   )
 ```
-
 
 ```{r}
 # Seniors
@@ -460,6 +419,7 @@ data2019_clean %>%
     snap_over_100 = sum(snap_la_pct > 100, na.rm = TRUE)
   )
 ```
+
 ```{r}
 data2015_clean %>%
   filter(snap_la_pct > 100) %>%
@@ -525,7 +485,6 @@ data2019_clean %>%
 #  )
 ```
 
-
 ```{r}
 combined_data <- bind_rows(
   data2015_clean,
@@ -533,13 +492,14 @@ combined_data <- bind_rows(
 )
 combined_data
 ```
+
 ```{r}
 dim(combined_data)
 table(combined_data$year)
 table(combined_data$area, useNA = "ifany")
 ```
-Explain:
-After harmonisation, the 2015 and 2019 datasets were combined into a dataset containing 145,395 census-tract observations. Of these, 110,341 were classified as urban and 35,054 as rural, with no missing values in the urban–rural classification.
+
+Explain: After harmonisation, the 2015 and 2019 datasets were combined into a dataset containing 145,395 census-tract observations. Of these, 110,341 were classified as urban and 35,054 as rural, with no missing values in the urban–rural classification.
 
 ```{r}
 summary_table <- combined_data %>%
@@ -673,7 +633,6 @@ colSums(is.na(data2015_clean))
 #summary(data2015_clean$senior_la_rate)
 #summary(data2019_clean$senior_la_rate)
 ```
-
 
 ```{r}
 #data2015_clean %>%
@@ -811,6 +770,7 @@ matched_data
 ```
 
 # Check how many census tracts matched?
+
 ```{r}
 dim(matched_data)
 ```
@@ -865,36 +825,15 @@ matched_data %>%
   )
 ```
 
-Reason for why choose histogram to show the Change in Senior Low-Access Share between 2015 and 2019:
-Based on the summary, we find the boxplot is right. However, the vast majority of changes in census tracts are very close to zero. 
-From the summary, especially Urban, 
-Q1 = -4.019 × 10^-14
-Median = 0
-Q3 = 4.974 × 10^-14
-The real meaning of these three number is 0% points. Thus, the boxplot of Urban: Q1 $\approx$ Median $\approx$ Q3 $\approx$ 0, it shows the box was naturally compressed into a line near y=0.
+Reason for why choose histogram to show the Change in Senior Low-Access Share between 2015 and 2019: Based on the summary, we find the boxplot is right. However, the vast majority of changes in census tracts are very close to zero. From the summary, especially Urban, Q1 = -4.019 × 10\^-14 Median = 0 Q3 = 4.974 × 10\^-14 The real meaning of these three number is 0% points. Thus, the boxplot of Urban: Q1 $\approx$ Median $\approx$ Q3 $\approx$ 0, it shows the box was naturally compressed into a line near y=0.
 
-While, Rural is not completely 0: 
-Q1 ≈ -0.014
-Median = 0
-Q3 ≈ 0.052
-However, the IQR just around 0.052−(−0.014) ≈ 0.066. There is the very small percentage points.
-Compare the Min(-38.16) and Max(+40.72), so the vertical axis is stretched very wide to accommodate these extreme changes, making the box even less visible.
+While, Rural is not completely 0: Q1 ≈ -0.014 Median = 0 Q3 ≈ 0.052 However, the IQR just around 0.052−(−0.014) ≈ 0.066. There is the very small percentage points. Compare the Min(-38.16) and Max(+40.72), so the vertical axis is stretched very wide to accommodate these extreme changes, making the box even less visible.
 
-The key finding We cannot be fully trust "pct_exact_zero".
-You now obtain:
-Rural: 10.41%
-Urban: 15.50%
-It seems that only 10–15% have remained unchanged.
+The key finding We cannot be fully trust "pct_exact_zero". You now obtain: Rural: 10.41% Urban: 15.50% It seems that only 10–15% have remained unchanged.
 
-However, for Urban, Q1 and Q3 are:
--0.000000000000040
-+0.000000000000050
+However, for Urban, Q1 and Q3 are: -0.000000000000040 +0.000000000000050
 
-This is actually floating-point numerical noise.
-R will consider:
-0.00000000000005 != 0
-So you use:
-senior_change == 0
+This is actually floating-point numerical noise. R will consider: 0.00000000000005 != 0 So you use: senior_change == 0
 
 It will classify many observations that are actually equivalent to 0 as "non-zero changes".
 
@@ -945,6 +884,7 @@ matched_stable %>%
     .groups = "drop"
   )
 ```
+
 Still check, Q1, Median, and Q3 all close to 0, it shows the data itself is highly concentrated around 0.
 
 ```{r}
@@ -990,7 +930,6 @@ ggplot(data2015_clean, aes(x = senior_la_pct)) +
   )
 ```
 
-
 ```{r}
 ggplot(combined_data, aes(x = senior_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
@@ -1015,7 +954,6 @@ ggplot(combined_data,aes(x = snap_la_pct)) +
   theme_minimal()
 ```
 
-
 ```{r}
 ggplot(matched_data,aes(x = senior_change)) +
   geom_histogram(bins = 50, na.rm = TRUE) +
@@ -1028,11 +966,8 @@ ggplot(matched_data,aes(x = senior_change)) +
   ) +
   theme_minimal()
 ```
-This will show more clearly than boxplot:
-A large number of tracts are concentrated around 0;
-Which ones are increases?
-Which ones are reductions?
-Is the distribution of Urban and Rural areas different?
+
+This will show more clearly than boxplot: A large number of tracts are concentrated around 0; Which ones are increases? Which ones are reductions? Is the distribution of Urban and Rural areas different?
 
 ```{r}
 change_summary <- matched_data %>%
@@ -1057,8 +992,6 @@ table(
 )
 ```
 
-
-
 ```{r}
 ggplot(matched_stable, aes(x = senior_change)) +
   geom_histogram(bins = 50, na.rm = TRUE) +
@@ -1071,13 +1004,10 @@ ggplot(matched_stable, aes(x = senior_change)) +
   ) +
   theme_minimal()
 ```
-We should use the second which better than last one. Even though we cannot see observable difference, it shows the results which checked: Rural → Urban：10; Urban → Rural：11 .
-There are 21 census tracts deleted.
 
-Therefore, although the second graph does not show any visual difference, it is more rigorous in its approach because it ensures that:
-For rural areas, the comparison always uses a 10-mile measure, and for urban areas, the comparison always uses a 1-mile measure. 
-So, the subsequent 2015–2019 change analysis suggests using "matched_stable".
+We should use the second which better than last one. Even though we cannot see observable difference, it shows the results which checked: Rural → Urban：10; Urban → Rural：11 . There are 21 census tracts deleted.
 
+Therefore, although the second graph does not show any visual difference, it is more rigorous in its approach because it ensures that: For rural areas, the comparison always uses a 10-mile measure, and for urban areas, the comparison always uses a 1-mile measure. So, the subsequent 2015–2019 change analysis suggests using "matched_stable".
 
 ```{r}
 # Make sure the number of row between two datasets
@@ -1086,7 +1016,6 @@ nrow(matched_stable)
 
 nrow(matched_data) - nrow(matched_stable)
 ```
-
 
 ```{r}
 matched_stable <- matched_stable %>%
@@ -1109,6 +1038,7 @@ ggplot(matched_stable,aes(x = snap_change)) +
 ```
 
 Clean Summary Statistics Section
+
 ```{r}
 summary_table <- combined_data %>%
   group_by(area, year) %>%
@@ -1126,10 +1056,10 @@ kable(summary_table,
       col.names = c("Area", "Year", "Senior Mean", "Senior Median",
                     "SNAP Mean", "SNAP Median", "N Tracts"))
 ```
-To talk about...
-median much lower then means = skewed data. Urban vastly outnumber rural. Values increase across all four rows
 
-keeping in mind a rural tract requires households and seniors to be at least 10 miles away compared to a min of 1 
+To talk about... median much lower then means = skewed data. Urban vastly outnumber rural. Values increase across all four rows
+
+keeping in mind a rural tract requires households and seniors to be at least 10 miles away compared to a min of 1
 
 ```{r}
 library(tidyr)
@@ -1151,9 +1081,10 @@ ggplot(dot_data, aes(x = Mean_Rate, y = Group, color = factor(year))) +
   ) +
   theme_minimal()
 ```
+
 Across both Senior and SNAP low-access shares, 2019 shows a higher mean rate than 2015, and Urban tracts show a higher mean rate than Rural tracts, in both years and for both groups
 
-Because "low-access" is defined using a much stricter distance threshold in urban areas (1 mile) than rural areas (10 miles), a higher urban low-access rate does not necessarily mean urban residents travel further to reach a supermarket than rural residents. This may just reflect that urban areas are held to a stricter access standard. A rural resident traveling several miles to a store may still count as "having access" under the rural threshold, while a much shorter distance in a city would count as "low access." 
+Because "low-access" is defined using a much stricter distance threshold in urban areas (1 mile) than rural areas (10 miles), a higher urban low-access rate does not necessarily mean urban residents travel further to reach a supermarket than rural residents. This may just reflect that urban areas are held to a stricter access standard. A rural resident traveling several miles to a store may still count as "having access" under the rural threshold, while a much shorter distance in a city would count as "low access."
 
 As a result, the lower mean low-access share in rural areas should not be read as evidence that rural food access is genuinely better. Rural residents may need to travel considerably farther in absolute terms before being classified as low-access at all, meaning the rural rate likely understates the true burden of distance compared to the urban rate. This distinction should be kept in mind whenever urban and rural low-access rates are compared directly in this report, rather than treating them as measuring the same underlying concept.
 
@@ -1171,9 +1102,8 @@ matched_stable %>%
     .groups = "drop"
   )
 ```
-Then, we can compare:
-Senior change: Rural vs Urban
-SNAP change: Rural vs Urban
+
+Then, we can compare: Senior change: Rural vs Urban SNAP change: Rural vs Urban
 
 ```{r}
 senior_paired_data <- matched_stable %>%
@@ -1228,7 +1158,6 @@ kable(
 )
 ```
 
-
 ```{r}
 snap_paired_data <- matched_stable %>%
   filter(
@@ -1281,6 +1210,7 @@ kable(
   )
 )
 ```
+
 ```{r}
 paired_summary <- bind_rows(
   senior_paired %>%
@@ -1322,6 +1252,3 @@ kable(
   )
 )
 ```
-
-
-
