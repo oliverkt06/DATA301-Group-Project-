@@ -133,6 +133,10 @@ kable(
   align = c("l", "c", "c")
 )
 ```
+=======
+Simialarly, both datasets also contained a considerable number of genuine NA values, particularly for SNAP_la_rate (2,405) and senior_la_rate (520).
+
+To enable comparisons between years, our group used both the 2015 and 2019 Food Access Research Atlas datasets. The datasets were straightforward to integrate because they contained consistent and largely homogeneous variable names. We therefore retained the same variables from each dataset, allowing us to make meaningful comparisons in food access between 2015 and 2019.
 
 ## Ethics, Privacy & Security
 
