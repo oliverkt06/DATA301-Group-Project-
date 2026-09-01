@@ -176,18 +176,58 @@ Further inspection identified a clear relationship between missingness and urban
 
 Similarly, both data sets also contained a considerable number of genuine NA values, particularly for SNAP_la_rate (2,405) and senior_la_rate (520).
 
+*Integration of data set*
 
-*Intergration of data set*
+To enable comparisons between 2015 and 2019, both data sets were cleaned and standardised before integration. Although the data sets had largely consistent structures, variable names were first converted to lowercase to account for minor differences in capitalisation between years. Equivalent variables relevant to our analysis were then selected from each data set and converted to consistent data types. Missing and NULL values were also represented consistently as NA.
 
-To enable comparisons between 2015 and 2019, both datasets were cleaned and standardised before integration. Although the datasets had largely consistent structures, variable names were first converted to lowercase to account for minor differences in capitalisation between years. Equivalent variables relevant to our analysis were then selected from each dataset and converted to consistent data types. Missing and NULL values were also represented consistently as NA.
-
-Further transformations were required to make the food-access measures directly comparable. An Urban/Rural classification and year indicator were created, while Senior and SNAP low-access measures were constructed using the relevant distance thresholds for urban and rural census tracts. Percentage measures also required standardisation because the 2015 share variables were represented as proportions, while the corresponding 2019 variables were already expressed as percentages. Once the variables were consistently defined and formatted, the datasets could be vertically combined for comparison between years.
+Further transformations were required to make the food-access measures directly comparable. An Urban/Rural classification and year indicator were created, while Senior and SNAP low-access measures were constructed using the relevant distance thresholds for urban and rural census tracts. Percentage measures also required standardisation because the 2015 share variables were represented as proportions, while the corresponding 2019 variables were already expressed as percentages. Once the variables were consistently defined and formatted, the data sets could be vertically combined for comparison between years.
 
 *Completeness of Data set*
 
-To enable comparisons between 2015 and 2019, both datasets were cleaned and standardised before integration. Although the datasets had largely consistent structures, variable names were first converted to lowercase to account for minor differences in capitalisation between years. Equivalent variables relevant to our analysis were then selected from each dataset and converted to consistent data types. Missing and NULL values were also represented consistently as NA.
+To enable comparisons between 2015 and 2019, both data sets were cleaned and standardised before integration. Although the data sets had largely consistent structures, variable names were first converted to lowercase to account for minor differences in capitalisation between years. Equivalent variables relevant to our analysis were then selected from each data set and converted to consistent data types. Missing and NULL values were also represented consistently as NA.
 
-Further transformations were required to make the food-access measures directly comparable. An Urban/Rural classification and year indicator were created, while Senior and SNAP low-access measures were constructed using the relevant distance thresholds for urban and rural census tracts. Percentage measures also required standardisation because the 2015 share variables were represented as proportions, while the corresponding 2019 variables were already expressed as percentages. Once the variables were consistently defined and formatted, the datasets could be vertically combined for comparison between years.
+Further transformations were required to make the food-access measures directly comparable. An Urban/Rural classification and year indicator were created, while Senior and SNAP low-access measures were constructed using the relevant distance thresholds for urban and rural census tracts. Percentage measures also required standardisation because the 2015 share variables were represented as proportions, while the corresponding 2019 variables were already expressed as percentages. Once the variables were consistently defined and formatted, the data sets could be vertically combined for comparison between years.
+
+```{r, echo=FALSE}
+dataset_overview <- tibble(
+  Feature = c(
+    "Census tracts",
+    "Variables retained for analysis",
+    "Urban tracts",
+    "Rural tracts",
+    "Senior access measures",
+    "SNAP access measures",
+    "Poverty measures"
+  ),
+  
+  `2015` = c(
+    nrow(data2015_clean),
+    ncol(data2015_clean),
+    sum(data2015_clean$urban == 1, na.rm = TRUE),
+    sum(data2015_clean$urban == 0, na.rm = TRUE),
+    "Yes",
+    "Yes",
+    "Yes"
+  ),
+  
+  `2019` = c(
+    nrow(data2019_clean),
+    ncol(data2019_clean),
+    sum(data2019_clean$urban == 1, na.rm = TRUE),
+    sum(data2019_clean$urban == 0, na.rm = TRUE),
+    "Yes",
+    "Yes",
+    "Yes"
+  )
+)
+
+kable(
+  dataset_overview,
+  caption = "Overview of the 2015 and 2019 Food Access Research Atlas datasets.",
+  col.names = c("Feature", "2015", "2019"),
+  align = c("l", "c", "c")
+)
+```
 
 ## Ethics, Privacy & Security
 
