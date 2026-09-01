@@ -25,7 +25,7 @@ The data sets contain information including census tract, poverty rate, food acc
 
 *Completeness of Data set*
 
-One point of interest was the substantial amount of missing data in the 2019 data set. A number of observations were originally represented as NULL. Although some of these appeared as though they could represent zero values, there was insufficient information to confidently distinguish a true zero from a missing observation. To avoid introducing unsupported assumptions, all NULL and other missing values were therefore converted to NA. This provided a consistent representation of missingness and allowed R to appropriately exclude these observations where necessary during subsequent analysis.
+One point of interest was that the 2019 dataset contained a large number of NULL values. These were assumed to represent zero values, as many of the affected variables represented whether an observation belonged to a particular demographic or access category. For example, a variable could represent the number of Native American individuals experiencing low food access at 20 miles, where a NULL indicated that there were no individuals meeting that condition. However, there was insufficient information to confidently determine that a NULL represented a true zero rather than a missing observation. To avoid introducing assumptions into the data, all NULL and other missing values were therefore converted to NA. This provided a consistent representation of missing data across both datasets and allowed these observations to be appropriately handled during subsequent analysis.
 
 ```{r, echo=FALSE}
 missing_table <- data.frame(
