@@ -15,36 +15,25 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Background and Data
 
+**Data set and Source of Data**
+
 Our group used the 2015 and 2019 Food Access Research Atlas datasets,
 available through the U.S. Department of Agriculture Economic Research
 Service.
 
-The datasets are of interest because they provide insight into access to
-supermarkets and essential food resources across different communities.
-They can be used to examine food access among people receiving benefits,
-those living in areas of high deprivation or low socioeconomic status,
-those living further away in urban vs rural areas, and different
-demographic groups. Using data from multiple years also allows us to
-identify changes over time and determine whether there have been
-noticeable improvements in food access.
+**Why does this data set matter?**
 
-The datasets contain information including census tract, poverty rate,
-food access at specified distances, and access measures across different
-racial and age groups, as well as SNAP beneficiaries. The majority of
-the variables are numerical, with some categorical variables such as
-census tract, state, and county. The data is structured so that
-individual variables represent specific measures of food access for
-particular demographic groups and distance thresholds.
+The data sets are of interest because they provide insight into access to supermarkets and essential food resources across different communities in the United States of America. They can be used to examine food access among people receiving benefits, those living in areas of high deprivation or low socioeconomic status, those living further away in urban vs rural areas, and different demographic groups. Using data from multiple years also allows us to identify changes over time and determine whether there have been noticeable improvements in food access.
 
-One point of interest was that the 2019 dataset contained a large number
-of NULL values. These were assumed to represent zero values, as many of
-the affected variables represented whether an observation belonged to a
-particular demographic or access category. For example, a variable could
-represent the number of Native American individuals experiencing low
-food access at 20 miles, where a NULL indicated that there were no
-individuals meeting that condition. In contrast, both datasets also
-contained a considerable number of genuine NA values, particularly for
-SNAP_la_rate (2,405) and senior_la_rate (520).
+**Types of Data in the data set**
+
+The data sets contain information including census tract, poverty rate, food access at specified distances, and access measures across different racial and age groups, as well as SNAP beneficiaries. Each observation represents a U.S. census tract, with columns containing demographic, socioeconomic and food-access measures associated with that tract. The majority of variables are numerical, including population counts, poverty rates and food-access measures, while categorical variables include state and county. The data sets are cross-sectional snapshots for 2015 and 2019 rather than continuous time-series data. Individual variables represent specific measures of food access for particular demographic groups and distance thresholds.
+
+**Completeness of Data set**
+
+One point of interest was the substantial amount of missing data in the 2019 data set. A number of observations were originally represented as NULL. Although some of these appeared as though they could represent zero values, there was insufficient information to confidently distinguish a true zero from a missing observation. To avoid introducing unsupported assumptions, all NULL and other missing values were therefore converted to NA. This provided a consistent representation of missingness and allowed R to appropriately exclude these observations where necessary during subsequent analysis.
+
+
 
 To enable comparisons between years, our group used both the 2015 and
 2019 Food Access Research Atlas datasets. The datasets were
@@ -739,7 +728,8 @@ ggplot(combined_data,
     geom = "text",
     aes(label = sprintf("%.1f", after_stat(y))),
     position = position_dodge(width = 0.75),
-    vjust = -0.8,
+    vjust = +1,
+    hjust = ,
     size = 3,
   ) +
   labs(
@@ -969,7 +959,7 @@ For the paired analysis, only census tracts with non-missing low-access
 shares in both 2015 and 2019 were included. Of the 72,485 tracts with stable 
 classification, 42,554 had complete senior data in both years and 42,589 had 
 complete SNAP data in both years (Table 2). Change was calculated as:
-Change= Low-access share2019 - Low-access share2015 and is reported in
+`Low-access share2019 - Low-access share2015` and is reported in
 percentage points. Positive values therefore represent an increase in
 low-access share between 2015 and 2019, while negative values represent
 a decrease.
