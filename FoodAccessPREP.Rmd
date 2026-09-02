@@ -11,15 +11,128 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **Background and Data**
 
-Our group used the 2015 and 2019 Food Access Research Atlas datasets, available through the U.S. Department of Agriculture Economic Research Service.
+*Data set and Source of Data*
 
-The datasets are of interest because they provide insight into access to supermarkets and essential food resources across different communities. They can be used to examine food access among people receiving benefits, those living in areas of high deprivation or low socioeconomic status, those living further away in urban vs rural areas, and different demographic groups. Using data from multiple years also allows us to identify changes over time and determine whether there have been noticeable improvements in food access.
+Our group used the 2015 and 2019 Food Access Research Atlas data sets, available through the U.S. Department of Agriculture Economic Research Service.
 
-The datasets contain information including census tract, poverty rate, food access at specified distances, and access measures across different racial and age groups, as well as SNAP beneficiaries. The majority of the variables are numerical, with some categorical variables such as census tract, state, and county. The data is structured so that individual variables represent specific measures of food access for particular demographic groups and distance thresholds.
+*Why does this data set matter?*
 
-One point of interest was that the 2019 dataset contained a large number of NULL values. These were assumed to represent zero values, as many of the affected variables represented whether an observation belonged to a particular demographic or access category. For example, a variable could represent the number of Native American individuals experiencing low food access at 20 miles, where a NULL indicated that there were no individuals meeting that condition. In contrast, both datasets also contained a considerable number of genuine NA values, particularly for SNAP_la_rate (2,405) and senior_la_rate (520).
+The data sets are of interest because they provide insight into access to supermarkets and essential food resources across different communities in the United States of America. They can be used to examine food access among people receiving benefits, those living in areas of high deprivation or low socioeconomic status, those living further away in urban vs rural areas, and different demographic groups. Using data from multiple years also allows us to identify changes over time and determine whether there have been noticeable improvements in food access.
 
-To enable comparisons between years, our group used both the 2015 and 2019 Food Access Research Atlas datasets. The datasets were straightforward to integrate because they contained consistent and largely homogeneous variable names. We therefore retained the same variables from each dataset, allowing us to make meaningful comparisons in food access between 2015 and 2019.
+*Types of Data in the data set*
+
+The data sets contain information including census tract, poverty rate, food access at specified distances, and access measures across different racial and age groups, as well as SNAP beneficiaries. Each observation represents a U.S. census tract, with columns containing demographic, socioeconomic and food-access measures associated with that tract. The majority of variables are numerical, including population counts, poverty rates and food-access measures, while categorical variables include state and county. The data sets are cross-sectional snapshots for 2015 and 2019 rather than continuous time-series data. Individual variables represent specific measures of food access for particular demographic groups and distance thresholds.
+
+*Completeness of Data set*
+
+One point of interest was the substantial amount of missing data in the 2019 data set. A number of observations were originally represented as NULL. Although some of these appeared as though they could represent zero values, there was insufficient information to confidently distinguish a true zero from a missing observation. To avoid introducing unsupported assumptions, all NULL and other missing values were therefore converted to NA. This provided a consistent representation of missingness and allowed R to appropriately exclude these observations where necessary during subsequent analysis.
+
+```{r, echo=FALSE}
+missing_table <- data.frame(
+  Year = c(2015, 2019),
+  Senior_Missing = c(
+    sum(is.na(data2015_clean$senior_la_pct)),
+    sum(is.na(data2019_clean$senior_la_pct))
+  ),
+  SNAP_Missing = c(
+    sum(is.na(data2015_clean$snap_la_pct)),
+    sum(is.na(data2019_clean$snap_la_pct))
+  )
+)
+
+kable(
+  missing_table,
+  caption = "Number of missing Senior and SNAP low-access share observations, by year.",
+  col.names = c("Year", "Senior Missing", "SNAP Missing")
+)
+```
+
+Missingness was not evenly distributed between the data sets. For the two variables central to our analysis, the 2015 data set contained no missing observations, while the 2019 data set contained 29,953 missing observations for the senior low-access percentage and 29,918 for the SNAP low-access percentage. This substantial difference in completeness between years was therefore considered when interpreting comparisons between 2015 and 2019. Comparisons between the data sets were done with caution. 
+
+```{r, echo=FALSE}
+library(dplyr)
+library(tibble)
+library(knitr)
+
+missing_area_table <- data2019_clean |>
+  mutate(
+    Area = if_else(urban == 1, "Urban", "Rural")
+  ) |>
+  group_by(Area) |>
+  summarise(
+    `Census Tracts` = n(),
+    `Senior Missing` = sum(is.na(senior_la_pct)),
+    `Senior Missing (%)` = round(mean(is.na(senior_la_pct)) * 100, 1),
+    `SNAP Missing` = sum(is.na(snap_la_pct)),
+    `SNAP Missing (%)` = round(mean(is.na(snap_la_pct)) * 100, 1),
+    .groups = "drop"
+  )
+
+kable(
+  missing_area_table,
+  caption = "Missing Senior and SNAP low-access observations by urban and rural census tracts in 2019.",
+  align = c("l", "r", "r", "r", "r", "r")
+)
+```
+
+Further inspection identified a clear relationship between missingness and urban/rural classification in the 2019 data set. Although urban census tracts contained a greater number of missing observations overall, this reflects the much larger number of urban tracts in the data set. Proportionally, 57.4% of rural census tracts had missing values for both the Senior and SNAP low-access measures, compared 
+
+Further inspection identified a clear relationship between missingness and urban/rural classification in the 2019 dataset. Although urban census tracts contained a greater number of missing observations overall, this reflects the much larger number of urban tracts in the dataset. Proportionally, 57.4% of rural census tracts had missing values for both the Senior and SNAP low-access measures, compared with 36.2% of urban census tracts. This indicates that missingness is disproportionately concentrated among rural observations and should be considered when interpreting subsequent urban-rural comparisons.
+
+Similarly, both data sets also contained a considerable number of genuine NA values, particularly for SNAP_la_rate (2,405) and senior_la_rate (520).
+
+*Integration of data set*
+
+To enable comparisons between 2015 and 2019, both data sets were cleaned and standardised before integration. Although the data sets had largely consistent structures, variable names were first converted to lowercase to account for minor differences in capitalisation between years. Equivalent variables relevant to our analysis were then selected from each data set and converted to consistent data types. Missing and NULL values were also represented consistently as NA.
+
+Further transformations were required to make the food-access measures directly comparable. An Urban/Rural classification and year indicator were created, while Senior and SNAP low-access measures were constructed using the relevant distance thresholds for urban and rural census tracts. Percentage measures also required standardisation because the 2015 share variables were represented as proportions, while the corresponding 2019 variables were already expressed as percentages. Once the variables were consistently defined and formatted, the data sets could be vertically combined for comparison between years.
+
+*Completeness of Data set*
+
+To enable comparisons between 2015 and 2019, both data sets were cleaned and standardised before integration. Although the data sets had largely consistent structures, variable names were first converted to lowercase to account for minor differences in capitalisation between years. Equivalent variables relevant to our analysis were then selected from each data set and converted to consistent data types. Missing and NULL values were also represented consistently as NA.
+
+Further transformations were required to make the food-access measures directly comparable. An Urban/Rural classification and year indicator were created, while Senior and SNAP low-access measures were constructed using the relevant distance thresholds for urban and rural census tracts. Percentage measures also required standardisation because the 2015 share variables were represented as proportions, while the corresponding 2019 variables were already expressed as percentages. Once the variables were consistently defined and formatted, the data sets could be vertically combined for comparison between years.
+
+```{r, echo=FALSE}
+dataset_overview <- tibble(
+  Feature = c(
+    "Census tracts",
+    "Variables retained for analysis",
+    "Urban tracts",
+    "Rural tracts",
+    "Senior access measures",
+    "SNAP access measures",
+    "Poverty measures"
+  ),
+  
+  `2015` = c(
+    nrow(data2015_clean),
+    ncol(data2015_clean),
+    sum(data2015_clean$urban == 1, na.rm = TRUE),
+    sum(data2015_clean$urban == 0, na.rm = TRUE),
+    "Yes",
+    "Yes",
+    "Yes"
+  ),
+  
+  `2019` = c(
+    nrow(data2019_clean),
+    ncol(data2019_clean),
+    sum(data2019_clean$urban == 1, na.rm = TRUE),
+    sum(data2019_clean$urban == 0, na.rm = TRUE),
+    "Yes",
+    "Yes",
+    "Yes"
+  )
+)
+
+kable(
+  dataset_overview,
+  caption = "Overview of the 2015 and 2019 Food Access Research Atlas datasets.",
+  col.names = c("Feature", "2015", "2019"),
+  align = c("l", "c", "c")
+)
+```
 
 ## Ethics, Privacy & Security
 
