@@ -936,7 +936,7 @@ matched_data %>%
 
 Reason for why choose histogram to show the Change in Senior Low-Access Share between 2015 and 2019: Based on the summary, we find the boxplot is right. However, the vast majority of changes in census tracts are very close to zero. From the summary, especially Urban, Q1 = -4.019 × 10\^-14 Median = 0 Q3 = 4.974 × 10\^-14 The real meaning of these three number is 0% points. Thus, the boxplot of Urban: Q1 $\approx$ Median $\approx$ Q3 $\approx$ 0, it shows the box was naturally compressed into a line near y=0.
 
-While, Rural is not completely 0: Q1 ≈ -0.014 Median = 0 Q3 ≈ 0.052 However, the IQR just around 0.052−(−0.014) ≈ 0.066. There is the very small percentage points. Compare the Min(-38.16) and Max(+40.72), so the vertical axis is stretched very wide to accommodate these extreme changes, making the box even less visible.
+While, Rural is not completely 0: Q1 $\approx$ -0.014 Median = 0 Q3 $\approx$ 0.052 However, the IQR just around 0.052-(-0.014) $\approx$ 0.066. There is the very small percentage points. Compare the Min(-38.16) and Max(+40.72), so the vertical axis is stretched very wide to accommodate these extreme changes, making the box even less visible.
 
 The key finding We cannot be fully trust "pct_exact_zero". You now obtain: Rural: 10.41% Urban: 15.50% It seems that only 10–15% have remained unchanged.
 
@@ -1114,7 +1114,11 @@ ggplot(matched_stable, aes(x = senior_change)) +
   theme_minimal()
 ```
 
+<<<<<<< HEAD
 We should use the second which better than last one. Even though we cannot see observable difference, it shows the results which checked: Rural → Urban：10; Urban → Rural：11 . There are 21 census tracts deleted.
+=======
+We should use the second which better than last one. Even though we cannot see observable difference, it shows the results which checked: Rural → Urban: 10; Urban → Rura: 11 . There are 21 census tracts deleted.
+>>>>>>> 25423a3 (Added a table to show missing values.)
 
 Therefore, although the second graph does not show any visual difference, it is more rigorous in its approach because it ensures that: For rural areas, the comparison always uses a 10-mile measure, and for urban areas, the comparison always uses a 1-mile measure. So, the subsequent 2015–2019 change analysis suggests using "matched_stable".
 
