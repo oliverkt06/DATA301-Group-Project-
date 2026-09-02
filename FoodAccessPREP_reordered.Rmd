@@ -1,7 +1,8 @@
 ---
 title: "FoodAccessPREP"
 author: "Oliver Temel, Mairangi Campbell and Jiayi Lu"
-date: "2026-08-19"
+IDs: " , , 300633898" 
+date: "2026-09-03"
 output: pdf_document
 editor_options: 
   markdown: 
@@ -51,6 +52,7 @@ straightforward to integrate because they contained consistent and
 largely homogeneous variable names. We therefore retained the same
 variables from each dataset, allowing us to make meaningful comparisons
 in food access between 2015 and 2019.
+
 
 # Ethics, Privacy & Security
 
@@ -111,13 +113,13 @@ data, code and analysis. With some additional time and resources to
 allocate into security it would be worthwhile establishing a documented
 data deletion plan for after the project concludes.
 
-```{r 2015 load, echo = FALSE}
+```{r 2015 load, echo = FALSE, include = FALSE}
 library(readxl)
 DATA2015 <- read_excel("FoodAccessResearchAtlasData2015.xlsx", 
                        sheet = 3, na = c("", "NULL"))
 ```
 
-```{r 2019 load, echo = FALSE}
+```{r 2019 load, echo = FALSE, include = FALSE}
 DATA2019 <- read_excel("FoodAccessResearchAtlasData2019.xlsx", 
                        sheet = 3, na = c("", "NULL"))
 ```
@@ -144,7 +146,7 @@ library(knitr)
 library(ggplot2)
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include = FALSE}
 # Select variables we need
 data2015_clean <- DATA2015 %>%
   select(
@@ -198,7 +200,7 @@ sapply(
 )
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include = FALSE}
 data2015_clean <- data2015_clean %>%
   mutate(year = 2015)
 
@@ -606,52 +608,62 @@ colSums(is.na(data2019_clean))
 colSums(is.na(data2015_clean))
 ```
 
+\newpage
+
+
 # Exploratory Data Analysis
 
-## 3.1 Overview of the Analysis
+**3.1 Overview of the Analysis**
 
 The exploratory analysis focused on the low-supermarket-access shares
-for adults aged 65 years and over and SNAP-receiving households.
+for two groups: adults aged 65 years and over, and SNAP-receiving households.
 Comparisons were made between 2015 and 2019 and between urban and rural
 census tracts. For urban census tracts, low supermarket access was
 measured using the one-mile threshold, while the ten-mile threshold was
 used for rural census tracts. All low-access shares were expressed as
-percentages to ensure consistency between the 2015 and 2019 datasets.
+percentages to ensure consistency between the 2015 and 2019 datasets.Because 
+urban and rural low-accessibility percentages are not calculated on the same 
+scale, the report's urban-rural comparisons reflect each area's results under 
+USDA standards—not a direct distance comparison. This analysis covers 2015–2019 
+changes and urban-rural tract differences, with all figures in percentages for
+consistent year-over-year comparison.
 
-Table 1 summarises the mean and median low-access shares by year and
-urban/rural status. Urban census tracts generally had higher low-access
-shares than rural census tracts for both seniors and SNAP households. In
-addition, the mean was consistently higher than the median, suggesting
-that the distributions were right-skewed. More detailed distributions
-are examined in the following sections.
+Table 1 shows a clear unbran-rural gap: the mean low-access share for 
+older adults in urban census tracts is roughly double that in rural tracts 
+(3.4% vs. 1.7% in 2015; 5.3% vs. 4.0% in 2019), and the same pattern holds for 
+SNAP households (1.3% vs. 2.9% in 2015; 2.8% vs. 4.3% in 2019). This pattern 
+reflects the differing USDA thresholds applied to urban and rural areas, rather 
+than an absolute access gap. The effective sample size dropped substantially 
+between 2015 and 2019, with rural tract observations more than halving 
+(from 17,692 to around 7,400), suggesting that 2019 estimates should 
+be interpreted with greater caution than those for 2015. Based on the table, 
+every mean exceeds its corresponding median, with the largest gap observed 
+in the 2015 rural group (mean 1.7% vs. median 0.0%), indicating a strongly 
+right-skewed distribution where a small number of tracts with particularly 
+severe accessibility barriers pull the averages upward.
 
-```{r}
+```{r, echo = FALSE}
 summary_table <- combined_data %>%
   group_by(area, year) %>%
   summarise(
     Senior_Mean   = round(mean(senior_la_pct, na.rm = TRUE), 1),
     Senior_Median = round(median(senior_la_pct, na.rm = TRUE), 1),
+    Senior_Valid_N = sum(!is.na(senior_la_pct)),
+    
     SNAP_Mean     = round(mean(snap_la_pct, na.rm = TRUE), 1),
     SNAP_Median   = round(median(snap_la_pct, na.rm = TRUE), 1),
+    SNAP_Valid_N = sum(!is.na(snap_la_pct)),
     n_tracts      = n(),
     .groups = "drop"
   )
 
 kable(summary_table,
       caption = "Mean and median low-access share (%) for seniors and SNAP households, by area and year.",
-      col.names = c("Area", "Year", "Senior Mean", "Senior Median",
-                    "SNAP Mean", "SNAP Median", "N Tracts"))
+      col.names = c("Area", "Year", "Senior Mean", "Senior Median", "Senior N (Valid)",
+                    "SNAP Mean", "SNAP Median", "SNAP N (Valid)", "N Tracts"))
 ```
 
-Table 2 shows substantial differences in data completeness between the
-two years. There were no missing values in the Senior or SNAP low-access
-share variables used for 2015, whereas the 2019 data contained 29,953
-missing senior observations and 29,918 missing SNAP observations.
-Therefore, comparisons involving 2019 should be interpreted with caution
-because they are based only on census tracts with available low-access
-information.
-
-```{r}
+```{r, echo = FALSE, include = FALSE}
 missing_table <- data.frame(
   Year = c(2015, 2019),
   Senior_Missing = c(
@@ -669,10 +681,14 @@ kable(missing_table,
       col.names = c("Year", "Senior Missing", "SNAP Missing"))
 ```
 
-## 3.2 Senior Low-Access Share: Distribution and Urban–Rural Comparison
+
+**3.2 Senior Low-Access Share: Distribution and Urban–Rural Comparison**
+
+The following sections look at distribution of variables in more detail, 
+starting with seniors.
 
 Figure 1 shows the distribution of senior low-access shares by year and
-urban/rural status. The distributions were strongly right-skewed across
+urban/rural areas. The distributions were strongly right-skewed across
 all four groups, with most census tracts having relatively low senior
 low-access shares and a smaller number having much higher values. Urban
 census tracts generally showed higher low-access shares than rural
@@ -681,62 +697,79 @@ higher values than in 2015. However, interpret the 2019 results
 cautiously because the senior low-access variable contained substantial
 missing data.
 
-```{r}
+```{r, echo = FALSE,fig.width = 5.8, fig.height = 3.0}
 ggplot(combined_data, aes(x = senior_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   facet_grid(area ~ year) +
   labs(
-    title = "Figure 1: Distribution of Senior Low-Access Share",
+    title = "Figure1. Distribution of Senior Low-Access Share",
     x = "Senior Low-Access Share (%)",
     y = "Number of Census Tracts"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
 ```
 
-Figure 2 provides a more direct comparison between urban and rural
-census tracts. Urban tracts had higher median senior low-access shares
-than rural tracts in both 2015 and 2019, and the 2019 distributions were
-generally higher than those in 2015. Both years also contained several
-high-value outliers, which is consistent with the right-skewed
-distributions observed in Figure 1.
+Figure 2 provides a more direct comparison between urban and rural tracts 
+for the senior low-access share. In both 2015 and 2019, the median senior 
+low-access share was consistently higher in urban tracts than in rural tracts, 
+rising from 0.6% to 3.5% in urban areas compared with 0.0% to 1.7% in rural 
+areas. The spread also widened between the two years: in rural areas, the 
+boxp shifted from being almost flat at zero in 2015, but by 2019 it had 
+extended noticeably upward by several percentage points. Urban tracts showed 
+a similar pattern, with the box stretching further above the median, 
+indicating greater variability across tracts in 2019. In both years, a number 
+of outlying high values are visible, which is consistent with the right-skewed 
+distribution observed in Figure 1.
 
-```{r}
+```{r, echo = FALSE,warning=FALSE, fig.width = 5.8, fig.height = 3.0}
 # Senior Boxplot
-ggplot(
-  combined_data,
-  aes(
-    x = factor(year),
-    y = senior_la_pct,
-    fill = area
-  )
-) +
-  geom_boxplot(
-    outlier.size = 0.3,
-    na.rm = TRUE
-  ) +
+ggplot(combined_data, 
+       aes(x = factor(year), y = senior_la_pct, fill = area)) +
+  geom_boxplot(outlier.size = 0.3,na.rm = TRUE) +
   scale_fill_grey() +
+  stat_summary(
+    fun = median,
+    geom = "text",
+    aes(label = sprintf("%.1f", after_stat(y))),
+    position = position_dodge(width = 0.75),
+    vjust = -0.8,
+    size = 3,
+  ) +
   labs(
-    title = "Figure 2: Senior Low-Access Share by Year and Area",
+    title = "Figure 2. Senior Low-Access Share by Year and Area",
     x = "Year",
     y = "Senior Low-Access Share (%)",
     fill = "Area"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
 ```
 
-Overall, the senior low-access share was generally higher in urban than
-rural census tracts, and the distributions were strongly right-skewed in
-both years. The apparent differences between 2015 and 2019 should be
-interpreted cautiously because of substantial missing data in 2019.
+Overall, the senior low-access share was generally higher in urban than rural 
+census tracts, and the distributions were strongly right-skewed in both years. 
+The apparent increase from 2015 to 2019 may be partly attributable to 
+differences in the set of census tracts with available data, rather than 
+reflecting a genuine change. In 2019, values for low accessibility among older 
+adults were missing for approximately 30,000 census tracts. This issue is 
+addressed directly in the matched analysis presented in Section 3.4.
 
-## 3.3 SNAP Low-Access Share: Distribution and Urban–Rural Comparison
+**3.3 SNAP Low-Access Share: Distribution and Urban–Rural Comparison**
 
-Figure 3 shows the distribution of SNAP low-access shares across census
-tracts. As with the senior measure, the distribution is right-skewed,
-with many census tracts concentrated at relatively low percentages and a
-smaller number of tracts having much higher values.
-
-```{r}
+This section examines the SNAP low-access share in more detail.
+```{r, echo = FALSE,include = FALSE}
 ggplot(combined_data, aes(x = snap_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   labs(
@@ -747,33 +780,92 @@ ggplot(combined_data, aes(x = snap_la_pct)) +
   theme_minimal()
 ```
 
-Figure 4 compares the distribution of SNAP low-access shares between
-urban and rural census tracts in 2015 and 2019. The plot allows
-differences in median, spread and extreme values to be compared while
-also showing whether the urban–rural pattern remained similar across the
-two years.
+Figure 3 displays the distribution of SNAP low-access share by year and 
+urban-rural regions. The distributions of all four groups exhibit a strong 
+right-skewed pattern: the SNAP low-access share in most census areas are 
+relatively low, while only a few census areas have significantly higher values. 
+Urban census areas show a longer and more extended tail to the right in both 
+years compared to rural census areas, indicating greater variability among 
+urban census areas.
 
-```{r}
+```{r, echo = FALSE, fig.width = 5.8, fig.height = 3.0}
 ggplot(combined_data,aes(x = snap_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   facet_grid(area ~ year) +
   labs(
-    title = "Figure 4: Distribution of SNAP Low-Access Share",
+    title = "Figure 3. Distribution of SNAP Low-Access Share",
     x = "SNAP Low-Access Share (%)",
     y = "Number of Census Tracts"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
 ```
 
-Overall, SNAP low-access shares were generally higher in urban than
-rural census tracts, with strongly right-skewed distributions in both
-years. The apparent differences between 2015 and 2019 should be
-interpreted cautiously because of substantial missing data in 2019.
+Figure 4 shows that the median SNAP low-access share was consistently higher in 
+urban tracts than in rural tracts in both years, rising from 0.3% to 1.8% in 
+urban areas compared with 0.0% to 1.0% in rural areas. The spread also widened 
+in both areas: rural boxes expanded from nearly flush with zero to about one 
+percentage point higher, while urban boxes stretched further above the median, 
+indicating greater tract-level variation in 2019. The distribution in both 
+years and for both regions remained strongly skewed to the right, with high 
+values observed extending to approximately 85% - 100%, indicating that a small 
+portion of the surveyed areas were more pronounced in urban areas and continued 
+to face significantly higher barriers to supermarket accessibility compared to 
+typical surveyed areas.
 
-## 3.4 Changes between 2015 and 2019
+```{r, echo = FALSE, warning=FALSE,fig.width = 5.8, fig.height = 3.0}
+# SNAP boxplot
+ggplot(combined_data, 
+       aes(x = factor(year), y = snap_la_pct,fill = area)) +
+  geom_boxplot(outlier.size = 0.3, na.rm = TRUE) +
+  scale_fill_grey() +
+  stat_summary(
+    fun = median,
+    geom = "text",
+    aes(label = sprintf("%.1f", after_stat(y))),
+    position = position_dodge(width = 0.75),
+    vjust = -0.5,
+    size = 3
+  ) +
+  labs(
+    title = "Figure 4. SNAP Low-Access Share by Year and Area",
+    x = "Year",
+    y = "SNAP Low-Access Share (%)",
+    fill = "Area"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
+```
+
+In short, the SNAP low-access share was generally higher in urban than rural 
+census tracts, and the distributions were strongly right-skewed in both years. 
+The apparent increase from 2015 to 2019 may be partly attributable to 
+differences in the set of census tracts with available data, rather than 
+reflecting a genuine change. In 2019, values for SNAP low-access were missing 
+for approximately 29,918 census tracts. This issue is addressed directly in 
+the matched analysis presented in Section 3.4.
+
+**3.4 Changes between 2015 and 2019**
 
 To examine changes between 2015 and 2019 more directly, census tracts in
-the two datasets were matched using their Census Tract identifiers.
+the two datasets were matched using their Census Tract identifiers. A total 
+of 72,506 census tracts were successfully matched across the two years. Of 
+these, 21 census tracts changed their urban/rural classification between 2015 
+and 2019. These tracts were excluded from the change analysis because the 
+low-access distance threshold differs between urban and rural areas. This 
+resulted in 72,485 census tracts with a stable urban/rural classification.
 
 ```{r, echo = FALSE, include = FALSE}
 # Match the same census tract in 2015 and 2019, and calculate the changes in the share of seniors and SNAP low-access individuals between the two years.
@@ -809,14 +901,7 @@ sum(!is.na(matched_data$senior_change))
 sum(!is.na(matched_data$snap_change))
 ```
 
-A total of 72,506 census tracts were successfully matched across the two
-years. Of these, 21 census tracts changed their urban/rural
-classification between 2015 and 2019. These tracts were excluded from
-the change analysis because the low-access distance threshold differs
-between urban and rural areas. This resulted in 72,485 census tracts
-with a stable urban/rural classification.
-
-```{r}
+```{r, echo = FALSE, include = FALSE}
 # Senior Change (using all matched tracts, before excluding reclassified tracts)
 ggplot(
   matched_data,
@@ -858,34 +943,7 @@ matched_data %>%
   )
 ```
 
-Reason for why choose histogram to show the Change in Senior Low-Access
-Share between 2015 and 2019: Based on the summary, we find the boxplot
-is right. However, the vast majority of changes in census tracts are
-very close to zero. From the summary, especially Urban, Q1 = -4.019 x
-10\^-14 Median = 0 Q3 = 4.974 x 10\^-14 The real meaning of these three
-number is 0% points. Thus, the boxplot of Urban: Q1 $\approx$ Median
-$\approx$ Q3 $\approx$ 0, it shows the box was naturally compressed into
-a line near y=0.
-
-While, Rural is not completely 0: Q1 $\approx$ -0.014 Median = 0 Q3
-$\approx$ 0.052 However, the IQR just around 0.052-(-0.014) $\approx$
-0.066. There is the very small percentage points. Compare the
-Min(-38.16) and Max(+40.72), so the vertical axis is stretched very wide
-to accommodate these extreme changes, making the box even less visible.
-
-The key finding We cannot be fully trust "pct_exact_zero". You now
-obtain: Rural: 10.41% Urban: 15.50% It seems that only 10–15% have
-remained unchanged.
-
-However, for Urban, Q1 and Q3 are: -0.000000000000040 +0.000000000000050
-
-This is actually floating-point numerical noise. R will consider:
-0.00000000000005 != 0 So you use: senior_change == 0
-
-It will classify many observations that are actually equivalent to 0 as
-"non-zero changes".
-
-```{r}
+```{r, echo = FALSE, include = FALSE}
 # SNAP
 ggplot(
   matched_data,
@@ -907,51 +965,14 @@ matched_stable <- matched_data %>%
 matched_stable
 ```
 
-```{r}
-matched_stable %>%
-  group_by(area_2015) %>%
-  summarise(
-    n = sum(!is.na(snap_change)),
-    Q1 = quantile(snap_change, 0.25, na.rm = TRUE),
-    Median = median(snap_change, na.rm = TRUE),
-    Q3 = quantile(snap_change, 0.75, na.rm = TRUE),
-    Min = min(snap_change, na.rm = TRUE),
-    Max = max(snap_change, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-matched_stable %>%
-  group_by(area_2019) %>%
-  summarise(
-    n = sum(!is.na(snap_change)),
-    Q1 = quantile(snap_change, 0.25, na.rm = TRUE),
-    Median = median(snap_change, na.rm = TRUE),
-    Q3 = quantile(snap_change, 0.75, na.rm = TRUE),
-    Min = min(snap_change, na.rm = TRUE),
-    Max = max(snap_change, na.rm = TRUE),
-    .groups = "drop"
-  )
-```
-
-Still check, Q1, Median, and Q3 all close to 0, it shows the data itself
-is highly concentrated around 0.
-
-```{r}
-ggplot(matched_data,aes(x = senior_change)) +
-  geom_histogram(bins = 50, na.rm = TRUE) +
-  facet_wrap(~ area_2015) +
-  geom_vline(xintercept = 0,linetype = "dashed") +
-  labs(
-    title = "Distribution of Changes in Senior Low-Access Share, 2015-2019 (unfiltered)",
-    x = "Change in percentage points",
-    y = "Density"
-  ) +
-  theme_minimal()
-```
-
-This will show more clearly than boxplot: A large number of tracts are
-concentrated around 0; Which ones are increases? Which ones are
-reductions? Is the distribution of Urban and Rural areas different?
+For the paired analysis, only census tracts with non-missing low-access
+shares in both 2015 and 2019 were included. Of the 72,485 tracts with stable 
+classification, 42,554 had complete senior data in both years and 42,589 had 
+complete SNAP data in both years (Table 2). Change was calculated as:
+Change= Low-access share2019 - Low-access share2015 and is reported in
+percentage points. Positive values therefore represent an increase in
+low-access share between 2015 and 2019, while negative values represent
+a decrease.
 
 ```{r, echo = FALSE, include = FALSE}
 change_summary <- matched_data %>%
@@ -976,17 +997,6 @@ table(
 )
 ```
 
-We should use the second which better than last one. Even though we
-cannot see observable difference, it shows the results which checked:
-Rural to Urban: 10; Urban to Rural: 11 . There are 21 census tracts
-deleted.
-
-Therefore, although the second graph does not show any visual
-difference, it is more rigorous in its approach because it ensures that:
-For rural areas, the comparison always uses a 10-mile measure, and for
-urban areas, the comparison always uses a 1-mile measure. So, the
-subsequent 2015 - 2019 change analysis suggests using "matched_stable".
-
 ```{r, echo = FALSE, include = FALSE}
 # Make sure the number of row between two datasets
 nrow(matched_data)
@@ -1001,13 +1011,6 @@ matched_stable <- matched_stable %>%
 
 matched_stable
 ```
-
-For the paired analysis, only census tracts with non-missing low-access
-shares in both 2015 and 2019 were included. Change was calculated as:
-Change= Low-access share2019 - Low-access share2015 and is reported in
-percentage points. Positive values therefore represent an increase in
-low-access share between 2015 and 2019, while negative values represent
-a decrease.
 
 ```{r, echo = FALSE, include = FALSE}
 senior_paired_data <- matched_stable %>%
@@ -1115,7 +1118,20 @@ kable(
 )
 ```
 
-```{r}
+Table 2 reveals an interesting contrast: the trends for senior and SNAP 
+households moved in opposite directions between 2015 and 2019. The mean 
+proportion of older adults rose slightly in both rural (from 3.94% to 3.96%) 
+and urban (from 5.21% to 5.32%) census tracts, whilst the mean proportion of 
+SNAP recipients fell slightly in both rural (from 2.91% to 2.77%) and urban 
+(from 4.40% to 4.33%) census tracts. These opposite trends suggest that 
+changes in supermarket accessibility for these two groups are not driven by 
+the same underlying trend, indicating that the factors influencing changes 
+in accessibility for older people may not be entirely the same as those 
+affecting SNAP households. However, the magnitude of these changes is small 
+relative to the degree of variation within each group shown in Table 1, and 
+the median changes for all four groups are exactly zero.
+
+```{r, echo = FALSE}
 paired_summary <- bind_rows(
   senior_paired %>%
     mutate(Group = "Senior"),
@@ -1134,6 +1150,13 @@ paired_summary <- bind_rows(
     Mean_Change,
     Median_Change
   ) %>%
+  mutate(across(c(Mean_2015, Mean_2019, Median_2015, Median_2019,
+                Mean_Change, Median_Change),
+              ~ {
+                x <- round(.x, 2)
+                x[x == 0] <- 0
+                sprintf("%.2f", x)
+              })) %>%
   arrange(Group, area_2015)
 
 kable(
@@ -1149,73 +1172,130 @@ kable(
     "Median 2019 (%)",
     "Mean Change (pp)",
     "Median Change (pp)"
-  ),
+  ),  
   align = c(
-    "l", "l", "r",
-    "r", "r", "r", "r", "r", "r"
+    "c", "l",
+    "r", "r", "r", "r", "r", "r", "r"
   )
 )
 ```
 
-From Table 3, we compared the different groups with the different areas
-between 2015 and 2019. For seniors, the paired mean low-access share
-increased only slightly between 2015 and 2019. In rural census tracts,
-the mean increased from 3.94% to 3.96%, corresponding to an average
-increase of 0.02 percentage points. In urban census tracts, the mean
-increased from 5.21% to 5.32%, an average increase of 0.11 percentage
-points. The median change was zero in both rural and urban tracts,
-indicating that the typical matched census tract experienced little or
-no change. For SNAP households, the direction of the average change
-differed from that observed for seniors. The mean low-access share
-decreased from 2.91% to 2.77% in rural census tracts, corresponding to a
-mean change of -0.14 percentage points. In urban census tracts, the mean
-decreased from 4.40% to 4.33%, corresponding to a mean change of -0.07
-percentage points. However, the median change was again zero in both
-groups, suggesting that changes for a typical matched census tract were
-very small.
+```{r, echo=FALSE, include=FALSE}
+#matched_stable %>%
+#  group_by(area_2015) %>%
+#  summarise(
+#    n = sum(!is.na(snap_change)),
+#    Q1 = quantile(snap_change, 0.25, na.rm = TRUE),
+#    Median = median(snap_change, na.rm = TRUE),
+#    Q3 = quantile(snap_change, 0.75, na.rm = TRUE),
+#    Min = min(snap_change, na.rm = TRUE),
+#    Max = max(snap_change, na.rm = TRUE),
+#    .groups = "drop"
+#  )
 
+#matched_stable %>%
+#  group_by(area_2019) %>%
+#  summarise(
+#    n = sum(!is.na(snap_change)),
+#    Q1 = quantile(snap_change, 0.25, na.rm = TRUE),
+#    Median = median(snap_change, na.rm = TRUE),
+#    Q3 = quantile(snap_change, 0.75, na.rm = TRUE),
+#    Min = min(snap_change, na.rm = TRUE),
+#    Max = max(snap_change, na.rm = TRUE),
+#    .groups = "drop"
+#  )
 
+snap_change_summary <- matched_stable %>%
+  group_by(Area = area_2015) %>%
+  summarise(
+    N = sum(!is.na(snap_change)),
+    Q1 = round(quantile(snap_change, 0.25, na.rm = TRUE), 2),
+    Median = round(median(snap_change, na.rm = TRUE), 2),
+    Q3 = round(quantile(snap_change, 0.75, na.rm = TRUE), 2),
+    Min = round(min(snap_change, na.rm = TRUE), 2),
+    Max = round(max(snap_change, na.rm = TRUE), 2),
+    .groups = "drop"
+  )
+
+kable(
+  snap_change_summary,
+  caption = "Summary of changes in SNAP low-access share, 2015–2019, by area"
+)
+```
+
+```{r,echo=FALSE,include=FALSE, fig.width = 5.8, fig.height = 3.0}
+ggplot(matched_data,aes(x = senior_change)) +
+  geom_histogram(bins = 50, na.rm = TRUE) +
+  facet_wrap(~ area_2015) +
+  geom_vline(xintercept = 0,linetype = "dashed") +
+  labs(
+    title = "Distribution of Changes in Senior Low-Access Share, 2015-2019 (unfiltered)",
+    x = "Change in percentage points",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
+```
 
 Figure 5 shows that changes in senior low-access share were strongly
 concentrated around zero in both rural and urban census tracts. This is
-consistent with the zero median changes reported in Table 3. Although
+consistent with the zero median changes reported in Table 2. Although
 most census tracts experienced relatively small changes, a smaller
 number showed substantially larger positive or negative changes.
 
-```{r}
+```{r,echo=FALSE, fig.width = 5.8, fig.height = 3.0, out.width="80%"}
 ggplot(matched_stable, aes(x = senior_change)) +
   geom_histogram(bins = 50, na.rm = TRUE) +
   facet_wrap(~ area_2015) +
   geom_vline(xintercept = 0, linetype = "dashed") +
   labs(
-    title = "Figure 5: Distribution of Changes in Senior Low-Access Share, 2015-2019",
+    title = "Figure 5. Distribution of Changes in Senior Low-Access Share (2015-2019)",
     x = "Change in percentage points",
-    y = "Density"
+    y = "Number of Census Tracts"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
 ```
 
-Figure 6 shows that change distributions in SNAP Low-Access share were
-also strongly concentrated around zero, although some census tracts
-experienced larger increases or decreases. The concentration around zero
-is consistent with the paired summary statistics and indicates that the
-overall changes between the two years were small for most matched census
-tracts.
+Figure 6 shows that change distributions in SNAP Low-Access share were also 
+strongly concentrated around zero, although some census tracts experienced 
+larger increases or decreases. This is consistent with the zero median changes 
+reported in Table 2, and together they indicate that the overall changes 
+between the two years were small for most matched census tracts.
 
-```{r}
+```{r,echo=FALSE, fig.width = 5.8, fig.height = 3.0, out.width="80%"}
 ggplot(matched_stable,aes(x = snap_change)) +
   geom_histogram(bins = 50, na.rm = TRUE) +
   facet_wrap(~ area_2015) +
   geom_vline(xintercept = 0, linetype = "dashed") +
   labs(
-    title = "Figure 6: Distribution of Changes in SNAP Low-Access Share, 2015-2019",
+    title = "Figure 6. Distribution of Changes in SNAP Low-Access Share (2015-2019)",
     x = "Change in percentage points",
     y = "Number of Census Tracts"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
 ```
 
-```{r}
+```{r,echo=FALSE,include=FALSE}
 matched_stable %>%
   group_by(area_2015) %>%
   summarise(
@@ -1230,17 +1310,18 @@ matched_stable %>%
   )
 ```
 
-Overall, the paired analysis suggests that tract-level changes between
-2015 and 2019 were generally small. Senior low-access shares showed
-slight positive average changes in both rural and urban areas, whereas
-SNAP low-access shares showed slight negative average changes. However,
-median changes were zero for all four comparisons, indicating that the
-mean changes were influenced by a smaller number of census tracts with
-larger positive or negative changes. These findings are descriptive and
-do not by themselves establish whether the observed differences are
-statistically significant.
+In summary, the paired analysis illustrates that the changes at the census 
+tract level between 2015 and 2019 were generally small. Senior and SNAP 
+low-access shares moved in opposite directions on average, but median changes 
+were zero across all four groups, indicating that the small mean shifts were 
+driven by a minority of tracts with larger changes rather than a broad trend. 
+These findings are descriptive results and do not establish statistical 
+significance; the paired analysis itself cannot eliminate the potential bias 
+caused by missing data. If there are systematic differences between the 
+census tracts with missing 2019 data and those with complete data, the above 
+paired results may still be affected.
 
-## 3.5 Additional Comparison: Mean Low-Access Share by Group
+**3.5 Additional Comparison: Mean Low-Access Share by Group**
 
 To talk about... median much lower then means = skewed data. Urban
 vastly outnumber rural. Values increase across all four rows
@@ -1248,7 +1329,7 @@ vastly outnumber rural. Values increase across all four rows
 keeping in mind a rural tract requires households and seniors to be at
 least 10 miles away compared to a min of 1
 
-```{r}
+```{r, echo=FALSE, fig.width=5.8, fig.height=3.0, out.width="90%"}
 library(tidyr)
 
 dot_data <- summary_table %>%
@@ -1266,7 +1347,14 @@ ggplot(dot_data, aes(x = Mean_Rate, y = Group, color = factor(year))) +
     y = NULL,
     color = "Year"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
 ```
 
 Across both Senior and SNAP low-access shares, 2019 shows a higher mean
@@ -1291,21 +1379,36 @@ rate. This distinction should be kept in mind whenever urban and rural
 low-access rates are compared directly in this report, rather than
 treating them as measuring the same underlying concept.
 
-## 3.6 Summary
+**3.6 Summary**
 
-The exploratory analysis identified several important patterns in the
-senior and SNAP low-access measures. First, both low-access share
-distributions were strongly right-skewed. Most census tracts had
-relatively low low-access shares, while a smaller number of tracts had
-substantially higher values. As a result, the mean was generally higher
-than the median, indicating that the mean was influenced by census
+In conclusion, the exploratory analysis has identified several important 
+patterns in the indicators of senior and SNAP low-access. First, both 
+low-access share distributions were strongly right-skewed. Most census 
+tracts had relatively low low-access shares, while a smaller number of 
+tracts had substantially higher values. Thus, the mean was generally 
+higher than the median, indicating that the mean was influenced by census
 tracts with relatively large low-access shares.
 
-Although the 2019 cross-sectional distributions appeared higher than
-those in 2015, these comparisons should be interpreted cautiously
-because the 2019 data contained substantial missing values. The paired
-analysis provided a more direct comparison of the same census tracts
-across years and showed that changes were generally small. Senior
-low-access shares increased slightly on average, while SNAP low-access
-shares decreased slightly, and the median change was zero across both
-rural and urban tracts.
+Across both measures, urban census tracts consistently showed higher low-access 
+shares than rural tracts in both years. However, since the urban census tracts 
+use a stricter one-mile threshold while the rural census tracts use a ten-mile 
+threshold, this disparity reflects the classification results of each region 
+based on their own USDA standards, rather than directly measuring which group 
+of residents is actually farther from the supermarket.
+
+Although cross-sectional distributions in 2019 appeared to be higher than
+those in 2015, such comparisons should be interpreted with caution as there 
+were a large number of missing values in the 2019 data.The paired analysis 
+provided a more direct comparison of the same census tracts across years and 
+showed that changes were generally small. Senior low-access shares increased 
+slightly on average, while SNAP low-access shares decreased slightly, and the 
+median change was zero across both rural and urban census tracts.
+
+
+\newpage
+
+# Individual Contributions
+
+
+
+
