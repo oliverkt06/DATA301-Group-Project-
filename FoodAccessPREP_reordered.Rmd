@@ -502,24 +502,51 @@ colSums(is.na(data2019_clean))
 colSums(is.na(data2015_clean))
 ```
 
-# Background and Data
+## Background and Data
 
+**1.1 Data set and Source of Data**
 
-**Data set and Source of Data**
+Our group used the 2015 and 2019 Food Access Research Atlas data sets,
+available through the U.S. Department of Agriculture Economic Research
+Service.
 
-Our group used the 2015 and 2019 Food Access Research Atlas data sets, available through the U.S. Department of Agriculture Economic Research Service.
+**1.2 Why does this data set matter?**
 
-**Why does this data set matter?**
+The data sets are of interest because they provide insight into access
+to supermarkets and essential food resources across different
+communities in the United States of America. They can be used to examine
+food access among people receiving benefits, those living in areas of
+high deprivation or low socioeconomic status, those living further away
+in urban vs rural areas, and different demographic groups. Using data
+from multiple years also allows us to identify changes over time and
+determine whether there have been noticeable improvements in food
+access.
 
-The data sets are of interest because they provide insight into access to supermarkets and essential food resources across different communities in the United States of America. They can be used to examine food access among people receiving benefits, those living in areas of high deprivation or low socioeconomic status, those living further away in urban vs rural areas, and different demographic groups. Using data from multiple years also allows us to identify changes over time and determine whether there have been noticeable improvements in food access.
+**1.3 Types of Data in the data set**
 
-**Types of Data in the data set**
+The data sets contain information including census tract, poverty rate,
+food access at specified distances, and access measures across different
+racial and age groups, as well as SNAP beneficiaries. Each observation
+represents a U.S. census tract, with columns containing demographic,
+socioeconomic and food-access measures associated with that tract. The
+majority of variables are numerical, including population counts,
+poverty rates and food-access measures, while categorical variables
+include state and county. The data sets are cross-sectional snapshots
+for 2015 and 2019 rather than continuous time-series data. Individual
+variables represent specific measures of food access for particular
+demographic groups and distance thresholds.
 
-The data sets contain information including census tract, poverty rate, food access at specified distances, and access measures across different racial and age groups, as well as SNAP beneficiaries. Each observation represents a U.S. census tract, with columns containing demographic, socioeconomic and food-access measures associated with that tract. The majority of variables are numerical, including population counts, poverty rates and food-access measures, while categorical variables include state and county. The data sets are cross-sectional snapshots for 2015 and 2019 rather than continuous time-series data. Individual variables represent specific measures of food access for particular demographic groups and distance thresholds.
+**1.4 Completeness of Data set**
 
-**Completeness of Data set**
-
-One point of interest was the substantial amount of missing data in the 2019 data set. A number of observations were originally represented as NULL. Although some of these appeared as though they could represent zero values, there was insufficient information to confidently distinguish a true zero from a missing observation. To avoid introducing unsupported assumptions, all NULL and other missing values were therefore converted to NA. This provided a consistent representation of missingness and allowed R to appropriately exclude these observations where necessary during subsequent analysis.
+One point of interest was the substantial amount of missing data in the
+2019 data set. A number of observations were originally represented as
+NULL. Although some of these appeared as though they could represent
+zero values, there was insufficient information to confidently
+distinguish a true zero from a missing observation. To avoid introducing
+unsupported assumptions, all NULL and other missing values were
+therefore converted to NA. This provided a consistent representation of
+missingness and allowed R to appropriately exclude these observations
+where necessary during subsequent analysis.
 
 ```{r, echo=FALSE}
 missing_table <- data.frame(
@@ -541,8 +568,14 @@ kable(
 )
 ```
 
-
-Missingness was not evenly distributed between the data sets. For the two variables central to our analysis, the 2015 data set contained no missing observations, while the 2019 data set contained 29,953 missing observations for the senior low-access percentage and 29,918 for the SNAP low-access percentage. This substantial difference in completeness between years was therefore considered when interpreting comparisons between 2015 and 2019. Comparisons between the data sets were done with caution. 
+Missingness was not evenly distributed between the data sets. For the
+two variables central to our analysis, the 2015 data set contained no
+missing observations, while the 2019 data set contained 29,953 missing
+observations for the senior low-access percentage and 29,918 for the
+SNAP low-access percentage. This substantial difference in completeness
+between years was therefore considered when interpreting comparisons
+between 2015 and 2019. Comparisons between the data sets were done with
+caution.
 
 ```{r, echo=FALSE}
 library(dplyr)
@@ -570,15 +603,39 @@ kable(
 )
 ```
 
-Further inspection identified a clear relationship between missingness and urban/rural classification in the 2019 dataset. Although urban census tracts contained a greater number of missing observations overall, this reflects the much larger number of urban tracts in the dataset. Proportionally, 57.4% of rural census tracts had missing values for both the Senior and SNAP low-access measures, compared with 36.2% of urban census tracts. This indicates that missingness is disproportionately concentrated among rural observations and should be considered when interpreting subsequent urban-rural comparisons.
+Further inspection identified a clear relationship between missingness
+and urban/rural classification in the 2019 dataset. Although urban
+census tracts contained a greater number of missing observations
+overall, this reflects the much larger number of urban tracts in the
+dataset. Proportionally, 57.4% of rural census tracts had missing values
+for both the Senior and SNAP low-access measures, compared with 36.2% of
+urban census tracts. This indicates that missingness is
+disproportionately concentrated among rural observations and should be
+considered when interpreting subsequent urban-rural comparisons.
 
-Similarly, both data sets also contained a considerable number of genuine NA values, particularly for SNAP_la_rate (2,405) and senior_la_rate (520).
+Similarly, both data sets also contained a considerable number of
+genuine NA values, particularly for SNAP_la_rate (2,405) and
+senior_la_rate (520).
 
-**Integration of data set**
+**1.5 Integration of data set**
 
-To enable comparisons between 2015 and 2019, both data sets were cleaned and standardised before integration. Although the data sets had largely consistent structures, variable names were first converted to lowercase to account for minor differences in capitalisation between years. Equivalent variables relevant to our analysis were then selected from each data set and converted to consistent data types. Missing and NULL values were also represented consistently as NA.
+To enable comparisons between 2015 and 2019, both data sets were cleaned
+and standardised before integration. Although the data sets had largely
+consistent structures, variable names were first converted to lowercase
+to account for minor differences in capitalisation between years.
+Equivalent variables relevant to our analysis were then selected from
+each data set and converted to consistent data types. Missing and NULL
+values were also represented consistently as NA.
 
-Further transformations were required to make the food-access measures directly comparable. An Urban/Rural classification and year indicator were created, while Senior and SNAP low-access measures were constructed using the relevant distance thresholds for urban and rural census tracts. Percentage measures also required standardisation because the 2015 share variables were represented as proportions, while the corresponding 2019 variables were already expressed as percentages. Once the variables were consistently defined and formatted, the data sets could be vertically combined for comparison between years.
+Further transformations were required to make the food-access measures
+directly comparable. An Urban/Rural classification and year indicator
+were created, while Senior and SNAP low-access measures were constructed
+using the relevant distance thresholds for urban and rural census
+tracts. Percentage measures also required standardisation because the
+2015 share variables were represented as proportions, while the
+corresponding 2019 variables were already expressed as percentages. Once
+the variables were consistently defined and formatted, the data sets
+could be vertically combined for comparison between years.
 
 ```{r, echo=FALSE}
 dataset_overview <- tibble(
@@ -625,7 +682,7 @@ kable(
 
 # Ethics, Privacy & Security
 
-**Ethics**
+**2.1 Ethics**
 
 This project involves data describing vulnerable populations,
 specifically seniors aged 65 and over and SNAP-receiving households.
@@ -651,7 +708,7 @@ meets USDA distance thresholds, it does not mean that every individual
 within that tract lacks access. As a result our conclusions are based on
 patterns observed in tracts, not on individuals.
 
-**Privacy**
+**2.2 Privacy**
 
 This project uses only publicly available, government-released data
 (USDA Food Access Research Atlas and U.S. Census Bureau data), both
@@ -669,7 +726,7 @@ represents a limitation of the dataset from a privacy perspective,
 though it is a low and indirect risk rather than a risk introduced by
 our analysis.
 
-**Security**
+**2.3 Security**
 
 As mentioned in the privacy section this project uses only public,
 pre-aggregated data. The overall security risk associated with this
@@ -1053,13 +1110,13 @@ matched_stable
 ```
 
 For the paired analysis, only census tracts with non-missing low-access
-shares in both 2015 and 2019 were included. Of the 72,485 tracts with stable 
-classification, 42,554 had complete senior data in both years and 42,589 had 
-complete SNAP data in both years (Table 5). Change was calculated as:
-`Low-access share2019 - Low-access share2015` and is reported in
-percentage points. Positive values therefore represent an increase in
-low-access share between 2015 and 2019, while negative values represent
-a decrease.
+shares in both 2015 and 2019 were included. Of the 72,485 tracts with
+stable classification, 42,554 had complete senior data in both years and
+42,589 had complete SNAP data in both years (Table 5). Change was
+calculated as: `Low-access share2019 - Low-access share2015` and is
+reported in percentage points. Positive values therefore represent an
+increase in low-access share between 2015 and 2019, while negative
+values represent a decrease.
 
 ```{r, echo = FALSE, include = FALSE}
 change_summary <- matched_data %>%
@@ -1413,12 +1470,6 @@ may still be affected.
 
 **3.5 Additional Comparison: Mean Low-Access Share by Group**
 
-To talk about... median much lower then means = skewed data. Urban
-vastly outnumber rural. Values increase across all four rows
-
-keeping in mind a rural tract requires households and seniors to be at
-least 10 miles away compared to a min of 1
-
 ```{r, echo=FALSE, fig.width=5.8, fig.height=3.0, out.width="90%"}
 library(tidyr)
 
@@ -1447,7 +1498,7 @@ ggplot(dot_data, aes(x = Mean_Rate, y = Group, color = factor(year))) +
   )
 ```
 
-Across both Senior and SNAP low-access shares, 2019 shows a higher mean
+Figure 7 shows that across both Senior and SNAP low-access shares, 2019 shows a higher mean
 rate than 2015, and Urban tracts show a higher mean rate than Rural
 tracts, in both years and for both groups
 
