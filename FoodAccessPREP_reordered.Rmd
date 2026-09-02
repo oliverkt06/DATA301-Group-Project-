@@ -1,7 +1,6 @@
 ---
-title: "FoodAccessPREP"
-author: "Oliver Temel, Mairangi Campbell and Jiayi Lu"
-IDs: " , , 300633898" 
+title: "Changes in Supermarket Access for Seniors and SNAP Households: A Comparison of Urban and Rural Census Tracts, 2015–2019"
+author: "Oliver Temel(), Mairangi Campbell() and Jiayi Lu(300633898)"
 date: "2026-09-03"
 output: pdf_document
 editor_options: 
@@ -505,21 +504,20 @@ colSums(is.na(data2015_clean))
 
 # Background and Data
 
-**Background and Data**
 
-*Data set and Source of Data*
+**Data set and Source of Data**
 
 Our group used the 2015 and 2019 Food Access Research Atlas data sets, available through the U.S. Department of Agriculture Economic Research Service.
 
-*Why does this data set matter?*
+**Why does this data set matter?**
 
 The data sets are of interest because they provide insight into access to supermarkets and essential food resources across different communities in the United States of America. They can be used to examine food access among people receiving benefits, those living in areas of high deprivation or low socioeconomic status, those living further away in urban vs rural areas, and different demographic groups. Using data from multiple years also allows us to identify changes over time and determine whether there have been noticeable improvements in food access.
 
-*Types of Data in the data set*
+**Types of Data in the data set**
 
 The data sets contain information including census tract, poverty rate, food access at specified distances, and access measures across different racial and age groups, as well as SNAP beneficiaries. Each observation represents a U.S. census tract, with columns containing demographic, socioeconomic and food-access measures associated with that tract. The majority of variables are numerical, including population counts, poverty rates and food-access measures, while categorical variables include state and county. The data sets are cross-sectional snapshots for 2015 and 2019 rather than continuous time-series data. Individual variables represent specific measures of food access for particular demographic groups and distance thresholds.
 
-*Completeness of Data set*
+**Completeness of Data set**
 
 One point of interest was the substantial amount of missing data in the 2019 data set. A number of observations were originally represented as NULL. Although some of these appeared as though they could represent zero values, there was insufficient information to confidently distinguish a true zero from a missing observation. To avoid introducing unsupported assumptions, all NULL and other missing values were therefore converted to NA. This provided a consistent representation of missingness and allowed R to appropriately exclude these observations where necessary during subsequent analysis.
 
@@ -576,7 +574,7 @@ Further inspection identified a clear relationship between missingness and urban
 
 Similarly, both data sets also contained a considerable number of genuine NA values, particularly for SNAP_la_rate (2,405) and senior_la_rate (520).
 
-*Integration of data set*
+**Integration of data set**
 
 To enable comparisons between 2015 and 2019, both data sets were cleaned and standardised before integration. Although the data sets had largely consistent structures, variable names were first converted to lowercase to account for minor differences in capitalisation between years. Equivalent variables relevant to our analysis were then selected from each data set and converted to consistent data types. Missing and NULL values were also represented consistently as NA.
 
