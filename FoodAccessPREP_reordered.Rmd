@@ -884,8 +884,8 @@ ggplot(combined_data,
     geom = "text",
     aes(label = sprintf("%.1f", after_stat(y))),
     position = position_dodge(width = 0.75),
-    vjust = +1,
-    hjust = +1,
+    vjust = -1.35,
+    hjust = +1.3,
     size = 3,
   ) +
   labs(
@@ -979,7 +979,8 @@ ggplot(combined_data,
     geom = "text",
     aes(label = sprintf("%.1f", after_stat(y))),
     position = position_dodge(width = 0.75),
-    vjust = -0.5,
+    vjust = -1.35,
+    hjust = +1.3,
     size = 3
   ) +
   labs(
