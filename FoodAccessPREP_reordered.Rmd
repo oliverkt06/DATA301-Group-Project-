@@ -1,6 +1,6 @@
 ---
-title: "Changes in Supermarket Access for Seniors and SNAP Households: A Comparison of Urban and Rural Census Tracts, 2015–2019"
-author: "Oliver Temel(), Mairangi Campbell() and Jiayi Lu(300633898)"
+title: "Changes in Supermarket Access for Seniors and SNAP Households: An Exploratory Data analysis of Urban and Rural Census Tracts, 2015-2019"
+author: "Oliver Temel(300660816), Mairangi Campbell() and Jiayi Lu(300633898)"
 date: "2026-09-03"
 output: pdf_document
 editor_options: 
@@ -706,7 +706,14 @@ uses aggregated rates for an area rather than individual data. So where
 a tract is classified as “low access” indicates the aggregate population
 meets USDA distance thresholds, it does not mean that every individual
 within that tract lacks access. As a result our conclusions are based on
-patterns observed in tracts, not on individuals.
+patterns observed in tracts, not on individuals. Additionally, A further
+ethical consideration of this relates to the integrity of comparing
+census tracts between the 2015 and 2019 datasets. Changes between the
+data sets could show a real change in food access but could also reflect
+changes in census boundaries or the collection methodology between
+years. as a result of this ethical consideration we treat the
+differences from 2015 to 2019 as descriptive patterns not exactly a
+causal change, this limitation is further discussed in section 3.4.
 
 **2.2 Privacy**
 
@@ -716,7 +723,7 @@ provided at the census-tract level. We did no original data collection
 of our own, or have any interaction with the individuals involved with
 the data. The data is already aggregated tract-areas and released for
 public use as verified by the U.S. government so the privacy risk to
-individuals is minimal. The risks too to privacy are not technical with
+individuals is minimal. The risks to privacy is not technical like
 how the data is structured or analysed but in the interpretation of the
 data. There is still a risk (although very small risk) of individual
 identification for tracts with very small populations e.g a small amount
@@ -725,6 +732,12 @@ be easier to infer information about specific households. This
 represents a limitation of the dataset from a privacy perspective,
 though it is a low and indirect risk rather than a risk introduced by
 our analysis.
+
+This residual privacy risk is relevant to the pattern we identified in 
+section 1.4 about missingness in the 2019 dataset which was disproportionately
+concentrated among rural census tracts: 57.4% missing compared with 36.2%
+in urban tracts, as shown in table 2. These rural tracts are therefore more
+likely to be affected by disclosure-avoidance suppression
 
 **2.3 Security**
 
@@ -738,11 +751,6 @@ source. This gave us a controlled and access-limited location for our
 data, code and analysis. With some additional time and resources to
 allocate into security it would be worthwhile establishing a documented
 data deletion plan for after the project concludes.
-
-After harmonisation, the 2015 and 2019 datasets were combined into a
-dataset containing 145,395 census-tract observations. Of these, 110,341
-were classified as urban and 35,054 as rural, with no missing values in
-the urban–rural classification.
 
 \newpage
 
@@ -1497,9 +1505,9 @@ ggplot(dot_data, aes(x = Mean_Rate, y = Group, color = factor(year))) +
   )
 ```
 
-Figure 7 shows that across both Senior and SNAP low-access shares, 2019 shows a higher mean
-rate than 2015, and Urban tracts show a higher mean rate than Rural
-tracts, in both years and for both groups
+Figure 7 shows that across both Senior and SNAP low-access shares, 2019
+shows a higher mean rate than 2015, and Urban tracts show a higher mean
+rate than Rural tracts, in both years and for both groups
 
 Because "low-access" is defined using a much stricter distance threshold
 in urban areas (1 mile) than rural areas (10 miles), a higher urban
