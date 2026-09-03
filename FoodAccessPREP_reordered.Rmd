@@ -1,6 +1,6 @@
 ---
 title: "**Changes in Supermarket Access for Seniors and SNAP Households: An Exploratory Data Analysis of Urban and Rural Census Tracts, 2015-2019**"
-author: "Oliver Temel(300660816), Mairangi Campbell() and Jiayi Lu(300633898)"
+author: "Oliver Temel(300660816), Mairangi Campbell(300655422) and Jiayi Lu(300633898)"
 date: "2026-09-03"
 output: pdf_document
 editor_options: 
@@ -1584,7 +1584,7 @@ Jiayi Lu: Responsible for data preparation and writing the Exploratory Data Anal
 
 Oliver Temel: Responsible for writing the Ethics, Privacy and Security section, report formatting, references, and final editing. Also contributed to the EDA, including summary missing values
 
-Mairangi Campbell: Responsible for write Background and Data section. Also contribute to plots in EDA.
+Mairangi Campbell: Responsible for writing the Background and Data section. Also contributed to the plots in EDA.
 
 
 # References:
