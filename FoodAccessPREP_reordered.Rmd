@@ -698,20 +698,21 @@ a result the language of the report has been mindfully selected to
 reflect this. For example we would state “A tract has a high rate of
 low-access seniors” instead of language that could be read as describing
 a senior or snap receiving households like “seniors in this area don’t
-shop at super markets”
+shop at supermarkets”
 
-Another ethical risk we are considering is an ecological fallacy. All
-analysis in this project is conducted at the census-tract level which
-uses aggregated rates for an area rather than individual data. So where
-a tract is classified as “low access” indicates the aggregate population
-meets USDA distance thresholds, it does not mean that every individual
-within that tract lacks access. As a result our conclusions are based on
-patterns observed in tracts, not on individuals. Additionally, A further
-ethical consideration of this relates to the integrity of comparing
-census tracts between the 2015 and 2019 datasets. Changes between the
-data sets could show a real change in food access but could also reflect
+Another ethical risk we are considering is an "ecological fallacy", which is the 
+error of drawing conclusion about individuals based on patterns observed in
+aggregated group level data (Robinson, 1950). All analysis in this project is
+conducted at the census-tract level which uses aggregated rates for an area 
+rather than individual data. So where a tract is classified as “low access” 
+indicates the aggregate population meets USDA distance thresholds, it does not 
+mean that every individual within that tract lacks access. As a result our
+conclusions are based on patterns observed in tracts, not on individuals.
+Additionally, A further ethical consideration of this relates to the integrity 
+of comparing census tracts between the 2015 and 2019 datasets. Changes between 
+the data sets could show a real change in food access but could also reflect
 changes in census boundaries or the collection methodology between
-years. as a result of this ethical consideration we treat the
+years. As a result of this ethical consideration we treat the
 differences from 2015 to 2019 as descriptive patterns not exactly a
 causal change, this limitation is further discussed in section 3.4.
 
@@ -722,7 +723,7 @@ This project uses only publicly available, government-released data
 provided at the census-tract level. We did no original data collection
 of our own, or have any interaction with the individuals involved with
 the data. The data is already aggregated tract-areas and released for
-public use as verified by the U.S. government so the privacy risk to
+public use by the U.S. government, so the privacy risk to
 individuals is minimal. The risks to privacy is not technical like how
 the data is structured or analysed but in the interpretation of the
 data. There is still a risk (although very small risk) of individual
@@ -736,16 +737,17 @@ our analysis.
 This residual privacy risk is relevant to the pattern we identified in
 section 1.4 about missingness in the 2019 dataset which was
 disproportionately concentrated among rural census tracts: 57.4% missing
-compared with 36.2% in urban tracts, as shown in table 2. Rural tracts
-are more likely to be affected by disclosure-avoidance suppression,
-since they tend to be smaller and more sparsely populated on average,
-and aggregated counts for very small populations are more easily
-withheld or redacted to protect individual privacy. Disclosure avoidance
-is a strategy commonly used to protect anonymity in low-population
-tracts. While we cannot directly confirm that this specific mechanism
-caused the missingness pattern observed here, it represents one
-plausible, consistent explanation, rather than a flaw introduced by our
-own data processing.
+compared with 36.2% in urban tracts, as shown in table 2. This pattern
+suggests the data is not missing completely at random, missingness appears
+systematically related to tract characteristics such as urban/rural status 
+(Rubin, 1976). One plausible explanation is disclosure-avoidance suppression, 
+as rural tracts tend to have smaller and more sparsely populated populations, 
+meaning aggregated counts may be more susceptible to suppression to protect
+individual privacy. Disclosure avoidance is a strategy commonly used to protect
+anonymity  in low-population tracts. While we cannot directly confirm that this
+specific mechanism caused the missingness pattern observed here, it represents 
+one plausible, consistent explanation, rather than a flaw introduced by our own 
+data processing.
 
 **2.3 Security**
 
@@ -785,7 +787,7 @@ urban and rural census tracts. For urban census tracts, low supermarket
 access was measured using the one-mile threshold, while the ten-mile
 threshold was used for rural census tracts. All low-access shares were
 expressed as percentages to ensure consistency between the 2015 and 2019
-datasets.Because urban and rural low-accessibility percentages are not
+datasets. Because urban and rural low-accessibility percentages are not
 calculated on the same scale, the report's urban-rural comparisons
 reflect each area's results under USDA standards—not a direct distance
 comparison. This analysis covers 2015–2019 changes and urban-rural tract
@@ -866,7 +868,7 @@ ggplot(combined_data, aes(x = senior_la_pct)) +
   geom_histogram(bins = 30, na.rm = TRUE) +
   facet_grid(area ~ year) +
   labs(
-    title = "Figure1. Distribution of Senior Low-Access Share",
+    title = "Figure 1. Distribution of Senior Low-Access Share",
     x = "Senior Low-Access Share (%)",
     y = "Number of Census Tracts"
   ) +
@@ -1578,9 +1580,9 @@ rural and urban census tracts.
 \newpage
 
 # Individual Contributions
-Jiayi Lu: Responsible for data preparation and write Exploratory Data Analysis section. Also contributed to the EDA, including summary statistics, plots, and matched census-tract analysis.
+Jiayi Lu: Responsible for data preparation and writing the Exploratory Data Analysis section. Also contributed to the EDA, including summary statistics, plots, and matched census-tract analysis.
 
-Oliver Temel: Responsible for write the Ethics, Privacy and Security section, report formatting, references, and final editing. Also contributed to the EDA, including summary missing values
+Oliver Temel: Responsible for writing the Ethics, Privacy and Security section, report formatting, references, and final editing. Also contributed to the EDA, including summary missing values
 
 Mairangi Campbell: Responsible for write Background and Data section. Also contribute to plots in EDA.
 
@@ -1590,3 +1592,7 @@ Mairangi Campbell: Responsible for write Background and Data section. Also contr
 Robinson, W. S. (1950). Ecological Correlations and the Behavior of
 Individuals. American Sociological Review, 15(3), 351–357.
 <https://doi.org/10.2307/2087176>
+
+Rubin, D. B. (1976). Inference and Missing Data. Biometrika, 63(3), 581–592.
+<https://doi.org/10.2307/2335739> 
+
