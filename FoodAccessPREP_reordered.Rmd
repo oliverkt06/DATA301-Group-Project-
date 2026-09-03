@@ -1,5 +1,5 @@
 ---
-title: "**Changes in Supermarket Access for Seniors and SNAP Households: An Exploratory Data analysis of Urban and Rural Census Tracts, 2015-2019**"
+title: "**Changes in Supermarket Access for Seniors and SNAP Households: An Exploratory Data Analysis of Urban and Rural Census Tracts, 2015-2019**"
 author: "Oliver Temel(300660816), Mairangi Campbell() and Jiayi Lu(300633898)"
 date: "2026-09-03"
 output: pdf_document
@@ -723,8 +723,8 @@ provided at the census-tract level. We did no original data collection
 of our own, or have any interaction with the individuals involved with
 the data. The data is already aggregated tract-areas and released for
 public use as verified by the U.S. government so the privacy risk to
-individuals is minimal. The risks to privacy is not technical like
-how the data is structured or analysed but in the interpretation of the
+individuals is minimal. The risks to privacy is not technical like how
+the data is structured or analysed but in the interpretation of the
 data. There is still a risk (although very small risk) of individual
 identification for tracts with very small populations e.g a small amount
 of senior SNAP households in a rural tract, where in principle it could
@@ -733,24 +733,44 @@ represents a limitation of the dataset from a privacy perspective,
 though it is a low and indirect risk rather than a risk introduced by
 our analysis.
 
-This residual privacy risk is relevant to the pattern we identified in 
-section 1.4 about missingness in the 2019 dataset which was disproportionately
-concentrated among rural census tracts: 57.4% missing compared with 36.2%
-in urban tracts, as shown in table 2. These rural tracts are therefore more
-likely to be affected by disclosure-avoidance suppression
+This residual privacy risk is relevant to the pattern we identified in
+section 1.4 about missingness in the 2019 dataset which was
+disproportionately concentrated among rural census tracts: 57.4% missing
+compared with 36.2% in urban tracts, as shown in table 2. Rural tracts
+are more likely to be affected by disclosure-avoidance suppression,
+since they tend to be smaller and more sparsely populated on average,
+and aggregated counts for very small populations are more easily
+withheld or redacted to protect individual privacy. Disclosure avoidance
+is a strategy commonly used to protect anonymity in low-population
+tracts. While we cannot directly confirm that this specific mechanism
+caused the missingness pattern observed here, it represents one
+plausible, consistent explanation, rather than a flaw introduced by our
+own data processing.
 
 **2.3 Security**
 
-As mentioned in the privacy section this project uses only public,
-pre-aggregated data. The overall security risk associated with this
-project is low. We practiced secure data management in this project
-where we store all our working data and code within a shared private
-Github repository, accessible only to the members of our group as
-opposed to a public repository or sharing code in any other external
-source. This gave us a controlled and access-limited location for our
-data, code and analysis. With some additional time and resources to
-allocate into security it would be worthwhile establishing a documented
-data deletion plan for after the project concludes.
+As mentioned in the privacy section, this project uses only public,
+pre-aggregated data, so the overall security risk associated with this
+project is low. We practiced secure data management by storing all
+working data and code within a shared, private GitHub repository,
+accessible only to the members of our group, rather than a public
+repository or any other external sharing method. This gave us a
+controlled, access-limited location for our data, code, and analysis,
+alongside full version control over changes made throughout the project
+
+Beyond access control, this repository also supports reproducibility.
+Every data cleaning, transformation, and analysis step used in this
+project, like reading in the raw datasets, standardising variable names,
+constructing the urban/rural classification, and matching census tracts
+between 2015 and 2019 is all recorded within the rmd file. This means
+that the entire analysis can be reproduced end-to-end by any member of
+the group or authorised person simply by re-running the document. This
+makes results traceable and easily backed up with evidence provided by
+the source itself.
+
+With some additional time and resources to allocate into security it
+would be worthwhile establishing a documented data deletion plan for
+after the project concludes.
 
 \newpage
 
@@ -1558,3 +1578,9 @@ rural and urban census tracts.
 \newpage
 
 # Individual Contributions
+
+# References:
+
+Robinson, W. S. (1950). Ecological Correlations and the Behavior of
+Individuals. American Sociological Review, 15(3), 351–357.
+<https://doi.org/10.2307/2087176>
